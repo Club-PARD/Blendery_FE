@@ -11,7 +11,7 @@ import SwiftUI
 struct BlenderyApp: App {
     var body: some Scene {
         WindowGroup {
-            RecipeTitle()
+            DetailRecipeView()
         }
     }
 }

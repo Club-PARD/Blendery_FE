@@ -43,3 +43,4 @@ private func verticalDivider() -> some View {
 #Preview {
     OptionBadge()
 }
+
