@@ -1,10 +1,3 @@
-//
-//  SearchBarView.swift
-//  Blendery
-//
-//  Created by 박성준 on 12/29/25.
-//
-
 import SwiftUI
 
 struct SearchBarView: View {
@@ -12,14 +5,24 @@ struct SearchBarView: View {
     var placeholder: String = "검색"
     var onSearchTap: (() -> Void)? = nil
 
+    // ✅ Mainpage_View에서 포커스 전달받기
+    var focus: FocusState<Bool>.Binding? = nil
+
     var body: some View {
         HStack(spacing: 10) {
-            TextField(placeholder, text: $text)
-                .font(.system(size: 16))
-                .foregroundColor(.black)
-                .padding(.leading, 18)
-                .padding(.vertical, 12)
-                .submitLabel(.search)
+            Group {
+                if let focus {
+                    TextField(placeholder, text: $text)
+                        .focused(focus)   // ✅ nil이 아닐 때만 연결
+                } else {
+                    TextField(placeholder, text: $text)
+                }
+            }
+            .font(.system(size: 16))
+            .foregroundColor(.black)
+            .padding(.leading, 18)
+            .padding(.vertical, 12)
+            .submitLabel(.search)
 
             Spacer()
 
@@ -40,11 +43,5 @@ struct SearchBarView: View {
         .cornerRadius(30)
         .frame(height: 65)
         .padding(.horizontal, 16)
-    }
-}
-
-#Preview {
-    SearchBarView(text: .constant("화이트초콜릿"), placeholder: "검색") {
-        print("검색 버튼 눌림")
     }
 }

@@ -27,7 +27,7 @@ struct MenuCardModel: Identifiable {
     let title: String
     let subtitle: String
     let lines: [String]
-    let isBookmarked: Bool
+    var isBookmarked: Bool
 }
 
 let menuCardsMock: [MenuCardModel] = [
