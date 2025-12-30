@@ -18,9 +18,9 @@ struct Login_AutoLogin: View {
 
     var body: some View {
         HStack {
-            Button(action: {
+            Button {
                 isAutoLogin.toggle()
-            }) {
+            } label: {
                 HStack(spacing: 8) {
                     Image(systemName: isAutoLogin ? "checkmark.square.fill" : "square")
                         .font(.system(size: 20))
@@ -30,6 +30,7 @@ struct Login_AutoLogin: View {
                 }
                 .foregroundColor(Color(red: 0.53, green: 0.53, blue: 0.53))
             }
+            .buttonStyle(.plain) // ✅ 눌림 모션 제거
 
             Spacer()
         }
