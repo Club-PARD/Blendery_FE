@@ -89,11 +89,13 @@ struct Mainpage_View: View {
                 VStack(spacing: 0) {
                     SearchBarView(
                         text: $searchText,
-                        placeholder: "화이트초콜릿",
-                        onSearchTap: {
-                            print("검색:", searchText)
-                        },
-                        focus: $isSearchFocused
+                        placeholder: "검색",
+                        onSearchTap: { print("검색:", searchText) },
+                        focus: $isSearchFocused,
+                        isFocused: Binding(
+                            get: { isSearchFocused },
+                            set: { isSearchFocused = $0 }
+                        )
                     )
                     .padding(.horizontal, 16)
                     .padding(.top, 10)

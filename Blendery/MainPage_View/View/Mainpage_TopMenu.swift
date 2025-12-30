@@ -63,7 +63,9 @@ struct Mainpage_TopMenu: View {
                     ForEach(Array(categories.enumerated()), id: \.element) { idx, category in
                         let isSelected = (selectedCategory == category)
                         let isFavorite = (category == favoriteKey)
-                        let itemWidth: CGFloat = (idx == 0) ? 80 : 63
+                        let itemWidth: CGFloat =
+                            (idx == 0) ? 80 :
+                            (category == "아이스크림") ? 80 : 63
 
                         Button {
                             withAnimation(.easeInOut(duration: 0.2)) {
@@ -71,13 +73,13 @@ struct Mainpage_TopMenu: View {
                             }
                         } label: {
                             Text(category)
-                                .font(.system(size: 13, weight: isSelected ? .bold : .regular)) // ✅ 선택 시 볼드
-                                .frame(width: itemWidth, height: 33)
-                                .foregroundColor(
-                                    isFavorite
-                                    ? favoriteOrange      // ✅ 즐겨찾기는 항상 주황색
-                                    : .black             // ✅ 나머지는 검은색
-                                )
+                                .font(.system(size: 15, weight: isSelected ? .bold : .regular))
+                                .lineLimit(1)
+                                .fixedSize(horizontal: true, vertical: false)   // ✅ 글자 폭대로 커지게(… 방지)
+                                .padding(.horizontal, 14)                       // ✅ 버튼 좌우 여백(= 버튼 폭)
+                                .frame(height: 33)
+                                .frame(minWidth: idx == 0 ? 80 : 0)             // ✅ (선택) 즐겨찾기만 최소폭 유지
+                                .foregroundColor(isFavorite ? favoriteOrange : .black)
                                 .background(
                                     GeometryReader { geo in
                                         Color.clear.preference(
