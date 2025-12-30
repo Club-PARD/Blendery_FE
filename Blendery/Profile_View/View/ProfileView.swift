@@ -12,7 +12,8 @@ struct ProfileView: View {
     
     @StateObject private var viewModel: ProfileViewModel
     @State private var showNameEdit = false
-    @State private var selectedContactEdit: ContactEditType?
+    @State private var showContactEdit = false
+    @State private var contactType: ContactEditType?
     
     init(profile: UserProfile) {
         _viewModel = StateObject(
@@ -68,6 +69,15 @@ struct ProfileView: View {
                     await viewModel.handleSelectedPhoto(item)
                 }
             }
+            .navigationDestination(isPresented: $showContactEdit) {
+                if let contactType {
+                    ContactEditView(
+                        viewModel: viewModel,
+                        type: contactType
+                    )
+                }
+            }
+
             .navigationDestination(isPresented: $showNameEdit) {
                 NameEditView(viewModel: viewModel)
             }
@@ -76,67 +86,34 @@ struct ProfileView: View {
     
     private var infoCard: some View {
         VStack(spacing: 0) {
-            infoRow(
+            ProfileInfoRow(
                 icon: Image("phone"),
                 title: "Phone",
-                value: viewModel.profile.phone
-            ) {
-                selectedContactEdit = .phone
-            }
+                content: AnyView(Text(formattedPhone(viewModel.profile.phone))),
+                onTap: {
+                    contactType = .phone
+                    showContactEdit = true
+                }
+            )
+
             
             Divider()
-                .padding(.leading, 23 + 24 + 8) // 아이콘 정렬 기준선
+                .padding(.horizontal, 20)
             
-            infoRow(
+            ProfileInfoRow(
                 icon: Image("email"),
                 title: "Email",
-                value: viewModel.profile.email
-            ) {
-                selectedContactEdit = .email
-            }
+                content: AnyView(Text(viewModel.profile.email)),
+                onTap: {
+                    contactType = .email
+                    showContactEdit = true
+                }
+            )
+
         }
         .padding(.vertical, 10)
         .background(cardBackground)
     }
-    
-    private func infoRow(
-        icon: Image,
-        title: String,
-        value: String,
-        onTap: @escaping () -> Void
-    ) -> some View {
-        
-        HStack(alignment: .center, spacing: 8) {
-            icon
-                .resizable()
-                .scaledToFit()
-                .frame(width: 20, height: 20)
-                .frame(width: 24)
-            
-            VStack(alignment: .leading, spacing: 4) {
-                Text(title)
-                    .font(.system(size: 14))
-                    .foregroundStyle(
-                        Color(red: 136/255, green: 136/255, blue: 136/255)
-                    )
-                
-                Text(value)
-                    .font(.system(size: 15))
-                    .foregroundColor(.primary)
-            }
-            
-            Spacer()
-            Button(action: onTap) {
-                Image(systemName: "chevron.right")
-                    .foregroundColor(.gray)
-                    .font(.system(size: 24))
-            }
-            .buttonStyle(.plain)
-        }
-        .padding(.horizontal, 23)
-        .padding(.vertical, 12)
-    }
-    
     
     
     private var photoEditButtons: some View {
@@ -158,9 +135,13 @@ struct ProfileView: View {
             }
             .background(
                 RoundedRectangle(cornerRadius: 12)
-                    .stroke(
-                        Color(red: 224/255, green: 224/255, blue: 224/255),
-                        lineWidth: 1
+                    .fill(Color(red: 247/255, green: 247/255, blue: 247/255))
+                    .overlay(
+                        RoundedRectangle(cornerRadius: 12)
+                            .stroke(
+                                Color(red: 224/255, green: 224/255, blue: 224/255),
+                                lineWidth: 1
+                            )
                     )
             )
             
@@ -193,6 +174,23 @@ struct ProfileView: View {
             .stroke(Color.gray.opacity(0.3), lineWidth: 0.5)
             .shadow(color: Color.black.opacity(0.3), radius: 2)
     }
+    
+    private func formattedPhone(_ number: String) -> String {
+        let digits = number.filter { $0.isNumber }
+
+        switch digits.count {
+        case 0...3:
+            return digits
+        case 4...7:
+            return "\(digits.prefix(3))-\(digits.dropFirst(3))"
+        default:
+            let first = digits.prefix(3)
+            let middle = digits.dropFirst(3).prefix(4)
+            let last = digits.dropFirst(7)
+            return "\(first)-\(middle)-\(last)"
+        }
+    }
+
 }
 
 #Preview {

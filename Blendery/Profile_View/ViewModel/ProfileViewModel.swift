@@ -20,7 +20,7 @@ import Combine
 @MainActor
 final class ProfileViewModel: ObservableObject {
 
-    var profile: UserProfile
+    @Published var profile: UserProfile
     @Published var profileImage: Image? = nil
 
     @Published var isPhotoEditSheetVisible = false
@@ -33,6 +33,53 @@ final class ProfileViewModel: ObservableObject {
         self.profile = profile
         self.service = ProfileService()
     }
+    
+    func updateName(_ newName: String) {
+        let trimmed = newName.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+        guard trimmed != profile.name else { return }
+
+        profile = UserProfile(
+            name: trimmed,
+            role: profile.role,
+            joinedAt: profile.joinedAt,
+            phone: profile.phone,
+            email: profile.email
+        )
+    }
+    
+    func updatePhone(_ newPhone: String) {
+        let trimmed = newPhone.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+        guard trimmed != profile.phone else { return }
+
+        profile = UserProfile(
+            name: profile.name,
+            role: profile.role,
+            joinedAt: profile.joinedAt,
+            phone: trimmed,
+            email: profile.email
+        )
+
+        // TODO: 서버 연동 시 여기서 API 호출
+    }
+
+    func updateEmail(_ newEmail: String) {
+        let trimmed = newEmail.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else { return }
+        guard trimmed != profile.email else { return }
+
+        profile = UserProfile(
+            name: profile.name,
+            role: profile.role,
+            joinedAt: profile.joinedAt,
+            phone: profile.phone,
+            email: trimmed
+        )
+
+        // TODO: 서버 연동 시 여기서 API 호출
+    }
+
 
     func openPhotoEditSheet() {
         isPhotoEditSheetVisible = true
@@ -59,20 +106,16 @@ final class ProfileViewModel: ObservableObject {
         else { return }
 
         profileImage = Image(uiImage: uiImage)
-        
+
         isPhotoEditSheetVisible = false
         showPhotoPicker = false
 
         try? await service.uploadProfileImage(data)
     }
     
-    func updateName(_ newName: String) {
-        let trimmed = newName.trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !trimmed.isEmpty else { return }
-
-        if trimmed != profile.name {
-            profile.name = trimmed
-        }
+    func cancelProfileImageEdit() {
+        isPhotoEditSheetVisible = false
+        showPhotoPicker = false
     }
 }
 

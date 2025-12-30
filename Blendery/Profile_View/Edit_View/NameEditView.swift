@@ -32,7 +32,7 @@ struct NameEditView: View {
                         text: $name
                     )
                     .font(.system(size: 18, weight: .medium))
-                    .textFieldStyle(.roundedBorder)
+//                    .textFieldStyle(.roundedBorder)
                     .padding(.vertical, 4)
                     .focused($isFocused)
                     
@@ -41,15 +41,31 @@ struct NameEditView: View {
                     .textInputAutocapitalization(.none)
                 )
             )
-
-            Button("완료") {
+            
+            Button {
                 if !name.isEmpty && name != viewModel.profile.name {
                     viewModel.updateName(name)
                 }
                 dismiss()
+            } label: {
+                Text("완료")
+                    .font(.system(size: 15))
+                    .foregroundColor(.black)
+                    .frame(maxWidth: .infinity)
+                    .frame(height: 52)
+                    .background(
+                        RoundedRectangle(cornerRadius: 12)
+                            .fill(Color(red: 247/255, green: 247/255, blue: 247/255))
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 12)
+                                    .stroke(
+                                        Color(red: 224/255, green: 224/255, blue: 224/255),
+                                        lineWidth: 1
+                                    )
+                            )
+                    )
             }
-            .buttonStyle(.borderedProminent)
-
+            
             Spacer()
         }
         .padding()

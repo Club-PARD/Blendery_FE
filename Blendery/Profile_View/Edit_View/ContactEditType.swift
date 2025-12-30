@@ -6,9 +6,12 @@
 //
 import UIKit
 
-enum ContactEditType {
+enum ContactEditType: Identifiable {
     case phone
     case email
+
+    var id: Self { self }
+
 
     static let navigationTitle = "프로필 수정"
 
