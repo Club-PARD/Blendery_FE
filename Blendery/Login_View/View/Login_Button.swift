@@ -16,7 +16,7 @@ struct Login_Button: View {
     var body: some View {
         ZStack {
             Button(action: {
-                // ✅ 로그인 로직 무시하고 바로 이동
+                //  로그인 로직 무시하고 바로 이동
                 goMain = true
             }) {
                 if viewModel.isLoading {
@@ -35,7 +35,7 @@ struct Login_Button: View {
             .cornerRadius(30)
             .disabled(viewModel.isLoading)
 
-            // ✅ UI에 전혀 영향 없는 숨겨진 네비게이션
+            //  UI에 전혀 영향 없는 숨겨진 네비게이션
             NavigationLink(
                 destination: Mainpage_View(),
                 isActive: $goMain

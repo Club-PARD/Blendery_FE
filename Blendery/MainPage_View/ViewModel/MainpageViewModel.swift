@@ -1,7 +1,7 @@
 import SwiftUI
 import Combine
 
-// ✅ 토스트 데이터 타입 추가 (onChange 요구사항 때문에 Equatable)
+//  토스트 데이터 타입 추가 (onChange 요구사항 때문에 Equatable)
 struct ToastData: Equatable {
     let message: String
 }
@@ -29,13 +29,13 @@ final class MainpageViewModel: ObservableObject {
 
         cards[idx].isBookmarked.toggle()
 
-        // ✅ 해제됐을 때만 토스트
+        //  해제됐을 때만 토스트
         if cards[idx].isBookmarked == false {
             toast = ToastData(message: "즐겨찾기가 해제되었습니다.")
         }
     }
 
-    // ✅ Mainpage_View에서 호출하던 함수 추가
+    //  Mainpage_View에서 호출하던 함수 추가
     func clearToast() {
         toast = nil
     }
@@ -66,7 +66,7 @@ final class MainpageViewModel: ObservableObject {
     }
 }
 
-// ✅ 검색창 뷰모델
+//  검색창 뷰모델
 @MainActor
 final class SearchBarViewModel: ObservableObject {
     @Published var text: String = ""
@@ -85,7 +85,7 @@ final class SearchBarViewModel: ObservableObject {
     }
 }
 
-// ✅ 탑메뉴 뷰모델
+//  탑메뉴 뷰모델
 @MainActor
 final class TopMenuViewModel: ObservableObject {
     @Published var categoryFrames: [String: CGRect] = [:]

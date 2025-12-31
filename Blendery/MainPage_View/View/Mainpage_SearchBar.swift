@@ -15,16 +15,16 @@ struct SearchBarView: View {
     var body: some View {
         HStack(spacing: 10) {
 
-            // ✅ 검색창(테두리 있는 박스)
+            //  검색창(테두리 있는 박스)
             HStack(spacing: 10) {
 
-                // ✅ 돋보기: 항상 왼쪽 고정
+                //  돋보기: 항상 왼쪽 고정
                 Image(systemName: "magnifyingglass")
                     .font(.system(size: 18, weight: .semibold))
                     .foregroundColor(orange)
                     .padding(.leading, 18)
 
-                // ✅ 텍스트필드
+                //  텍스트필드
                 Group {
                     if let focus {
                         TextField(placeholder, text: $vm.text)
@@ -42,7 +42,7 @@ struct SearchBarView: View {
 
                 Spacer()
 
-                // ✅ 검색 켜졌고 + 텍스트 있을 때만: 오른쪽 전체 지우기 X(작은거)
+                //  검색 켜졌고 + 텍스트 있을 때만: 오른쪽 전체 지우기 X(작은거)
                 if vm.isFocused && vm.hasText {
                     Button { vm.clearText() } label: {
                         Image(systemName: "xmark.circle.fill")
@@ -64,7 +64,7 @@ struct SearchBarView: View {
             .cornerRadius(30)
             .frame(height: 50)
 
-            // ✅ 오른쪽 큰 X(검색 종료)
+            //  오른쪽 큰 X(검색 종료)
             if vm.isFocused {
                 Button {
                     vm.close()

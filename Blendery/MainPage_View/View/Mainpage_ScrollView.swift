@@ -84,17 +84,22 @@ private extension Mainpage_ScrollView {
 
 // MARK: - NORMAL: 리스트(세로로 쭉)
 private extension Mainpage_ScrollView {
-
+    
+    @ViewBuilder
     var normalListView: some View {
         let items = vm.normalItems(for: selectedCategory)
-
-        return ScrollView {
-            LazyVStack(spacing: 0) {
-                ForEach(items) { item in
-                    MenuListRow(
-                        model: item,
-                        onToggleBookmark: { vm.toggleBookmark(id: item.id) }
-                    )
+        
+        if selectedCategory == "시즌메뉴" {
+            SeasonCarouselView(items: items)
+        } else {
+            ScrollView {
+                LazyVStack(spacing: 0) {
+                    ForEach(items) { item in
+                        MenuListRow(
+                            model: item,
+                            onToggleBookmark: { vm.toggleBookmark(id: item.id) }
+                        )
+                    }
                 }
             }
         }

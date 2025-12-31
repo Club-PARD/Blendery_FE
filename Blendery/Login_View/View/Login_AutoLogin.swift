@@ -24,7 +24,7 @@ struct Login_AutoLogin: View {
                 }
                 .foregroundColor(Color(red: 0.53, green: 0.53, blue: 0.53))
             }
-            .buttonStyle(.plain) // ✅ 눌림 모션 제거
+            .buttonStyle(.plain) //  눌림 모션 제거
 
             Spacer()
         }

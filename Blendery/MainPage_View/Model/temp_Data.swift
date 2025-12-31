@@ -9,20 +9,19 @@ import Foundation
 
 let categories: [String] = [
     "즐겨찾기",
-    "신메뉴",
+    "시즌메뉴",
     "커피",
     "논커피",
     "에이드",
     "과일주스",
     "블렌디드",
     "티",
-    "시즌메뉴",
     "아이스크림"
 ]
 
 struct MenuCardModel: Identifiable {
     let id = UUID()
-    let category: String        // ✅ 추가: 필터링 기준
+    let category: String        //  추가: 필터링 기준
     let tags: [String]
     let title: String
     let subtitle: String
@@ -31,7 +30,7 @@ struct MenuCardModel: Identifiable {
 }
 
 let menuCardsMock: [MenuCardModel] = [
-    // ✅ true 5개만 유지
+    //  true 5개만 유지
     MenuCardModel(
         category: "커피",
         tags: ["ICE", "EX"],

@@ -54,7 +54,7 @@ struct StoreSelectPanel: View {
                 .buttonStyle(.plain)
             }
         }
-        .padding(16) // ✅ 내부 여백만 (cornerRadius/shadow/가로 padding 없음)
+        .padding(16) //  내부 여백만 (cornerRadius/shadow/가로 padding 없음)
     }
 }
 

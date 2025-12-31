@@ -12,7 +12,7 @@ struct Mainpage_View: View {
     @StateObject private var vm = MainpageViewModel()
     @StateObject private var searchVM = SearchBarViewModel()
 
-    // ✅ categories를 프로퍼티 초기화에서 쓰는 게 불안정하면 init으로 박아주는 게 제일 안전
+    // categories를 프로퍼티 초기화에서 쓰는 게 불안정하면 init으로 박아주는 게 제일 안전
     @StateObject private var topMenuVM: TopMenuViewModel
     init() {
         _topMenuVM = StateObject(wrappedValue: TopMenuViewModel(categories: categories))
@@ -42,6 +42,7 @@ struct Mainpage_View: View {
                 )
                 .id(selectedCategory)
             }
+            .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .top)
 
             if searchVM.isFocused {
                 searchOverlay
@@ -79,14 +80,14 @@ struct Mainpage_View: View {
         }
         .navigationBarBackButtonHidden(true)
 
-        // ✅ 토스트 이벤트 처리
+        //  토스트 이벤트 처리
         .onChange(of: vm.toast) { newToast in
             guard let newToast else { return }
             presentToast(newToast.message)
             vm.clearToast()
         }
 
-        // ✅ FocusState 동기화
+        //  FocusState 동기화
         .onChange(of: searchVM.isFocused) { newValue in
             if isSearchFieldFocused != newValue {
                 isSearchFieldFocused = newValue
