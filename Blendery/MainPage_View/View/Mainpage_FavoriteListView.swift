@@ -1,8 +1,13 @@
 //
-//  Mainpage_ScrollView.swift
+//  Mainpage_FavoriteListView.swift.swift
 //  Blendery
 //
-//  Created by 박성준 on 12/31/25.
+//  Created by 박성준 on 1/3/26.
+//
+
+//
+//  Mainpage_FavoriteListView.swift
+//  Blendery
 //
 
 import SwiftUI
@@ -15,29 +20,16 @@ private struct CardHeightKey: PreferenceKey {
     }
 }
 
-struct Mainpage_ScrollView: View {
-    let selectedCategory: String
+struct Mainpage_FavoriteListView: View {
     @ObservedObject var vm: MainpageViewModel
     var onSelectMenu: (MenuCardModel) -> Void = { _ in }
 
     @State private var measuredHeights: [UUID: CGFloat] = [:]
-    
+
     var body: some View {
-        if selectedCategory == "즐겨찾기" {
-            favoriteMasonryView
-        } else {
-            normalListView
-        }
-    }
-}
-
-// MARK: - FAVORITE: 카드(2열 masonry)
-private extension Mainpage_ScrollView {
-
-    var favoriteMasonryView: some View {
         let columns = vm.distributeMasonry(items: vm.favoriteItems, heights: measuredHeights)
 
-        return ScrollView {
+        ScrollView {
             HStack(spacing: 17) {
 
                 VStack(spacing: 17) {
@@ -85,42 +77,7 @@ private extension Mainpage_ScrollView {
     }
 }
 
-// MARK: - NORMAL: 리스트(세로로 쭉)
-private extension Mainpage_ScrollView {
-
-    @ViewBuilder
-    var normalListView: some View {
-        let items = vm.normalItems(for: selectedCategory)
-
-        if selectedCategory == "시즌메뉴" {
-            SeasonCarouselView(
-                items: items,
-                onSelectMenu: onSelectMenu,
-                onToggleBookmark: { vm.toggleBookmark(id: $0) }
-            )
-        } else {
-            ScrollView {
-                LazyVStack(spacing: 0) {
-                    ForEach(Array(items.enumerated()), id: \.element.id) { idx, item in
-                        MenuListRow(
-                            model: item,
-                            onToggleBookmark: { vm.toggleBookmark(id: item.id) },
-                            onSelect: { onSelectMenu(item) }
-                        )
-
-                        if idx != items.count - 1 {
-                            Divider()
-                                .padding(.leading, 16)
-                        }
-                    }
-                }
-                .background(Color.white)
-            }
-        }
-    }
-}
-
-// MARK: - 카드(즐겨찾기 탭에서만)
+// 즐겨찾기 카드(이 파일 안에서만 씀)
 private struct MenuCardView: View {
     let model: MenuCardModel
     let onToggleBookmark: () -> Void
@@ -130,6 +87,7 @@ private struct MenuCardView: View {
         ZStack(alignment: .topTrailing) {
             RoundedRectangle(cornerRadius: 12)
                 .fill(Color.white)
+
             Color.clear
                 .contentShape(Rectangle())
                 .onTapGesture { onSelect() }
@@ -178,74 +136,6 @@ private struct MenuCardView: View {
     }
 }
 
-// MARK: - 리스트 Row(검색 오버레이에서도 쓰니까 공개 유지)
-struct MenuListRow: View {
-    let model: MenuCardModel
-    let onToggleBookmark: () -> Void
-    let onSelect: () -> Void
-
-    var body: some View {
-        Button(action: onSelect){
-            HStack(spacing: 12) {
-
-                rowImage
-                    .frame(width: 44, height: 44)
-                    .clipShape(RoundedRectangle(cornerRadius: 10))
-
-                VStack(alignment: .leading, spacing: 4) {
-                    Text(model.category)
-                        .font(.system(size: 12))
-                        .foregroundColor(.gray)
-
-                    Text(model.title)
-                        .font(.system(size: 16, weight: .semibold))
-                        .foregroundColor(.black)
-                }
-
-                Spacer()
-
-                Image(systemName: "chevron.right")
-                    .font(.system(size: 14, weight: .semibold))
-                    .foregroundColor(.gray)
-            }
-            .padding(.horizontal, 16)
-            .frame(maxWidth: .infinity, alignment: .leading)
-            .padding(.vertical, 12)
-            .background(Color.white)
-        }
-        .buttonStyle(.plain)
-    }
-
-    private var rowImage: some View {
-        if model.isImageLoading {
-            return AnyView(
-                ZStack {
-                    Color.white
-                    Image("vertical loading")
-                        .resizable()
-                        .scaledToFit()
-                        .padding(8)
-                }
-            )
-        }
-
-        let name = model.imageName ?? model.title
-        if UIImage(named: name) != nil {
-            return AnyView(
-                Image(name)
-                    .resizable()
-                    .scaledToFill()
-            )
-        }
-
-        return AnyView(
-            ZStack {
-                Color(red: 0.95, green: 0.95, blue: 0.95)
-                Image("loading")
-                    .resizable()
-                    .scaledToFit()
-                    .padding(8)
-            }
-        )
-    }
+#Preview {
+    Mainpage_FavoriteListView_swift()
 }
