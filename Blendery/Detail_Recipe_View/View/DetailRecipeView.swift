@@ -56,17 +56,19 @@ struct DetailRecipeView: View {
             }
         }
         .overlay(alignment: .bottomTrailing) {
-            let showTemp = menu.availableTemps.count >= 2
-            let showSize = menu.availableSizes.count >= 2
+            if !searchVM.isFocused {   // ✅ 검색중이면 숨김
+                let showTemp = menu.availableTemps.count >= 2
+                let showSize = menu.availableSizes.count >= 2
 
-            OptionButton(
-                temperature: $vm.selectedTemperature,
-                size: $vm.selectedSize,
-                showTemperatureToggle: showTemp,
-                showSizeToggle: showSize
-            )
-            .padding(.trailing, 16)
-            .padding(.bottom, 15)
+                OptionButton(
+                    temperature: $vm.selectedTemperature,
+                    size: $vm.selectedSize,
+                    showTemperatureToggle: showTemp,
+                    showSizeToggle: showSize
+                )
+                .padding(.trailing, 16)
+                .padding(.bottom, 15)
+            }
         }
         .onAppear {
             vm.menu = menu
