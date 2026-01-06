@@ -10,26 +10,35 @@ import SwiftUI
 struct RecipeTitle: View {
     let menu: MenuCardModel
     let optionTags: [String]
+    let thumbnailURL: URL?
 
     var body: some View {
         HStack {
             ZStack {
-                Circle()
+                Rectangle()
                     .fill(Color(red: 217/255, green: 217/255, blue: 217/255, opacity: 1.0))
-                    .frame(width: 68.17, height: 68.17)
-
-                // ✅ 타이틀 이름으로 이미지가 있으면 쓰고, 없으면 기본 이미지
-                if UIImage(named: menu.title) != nil {
-                    Image(menu.title)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(width: 37.5, height: 55.63)
-                } else {
+                    .frame(width: 70, height: 70)
+                    .cornerRadius(10)
+                if let url = thumbnailURL {
+                    AsyncImage(url: url) { phase in
+                        switch phase {
+                        case .empty:
+                            ProgressView()
+                        case .success(let image):
+                            image.resizable().scaledToFit()
+                        default:
+                            Image("상세 로딩")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 70, height: 70)
+                        }
+                    }
+                    .frame(width: 70, height: 70)
+                }else {
                     Image("상세 로딩")
                         .resizable()
                         .scaledToFit()
                         .frame(width: 70, height: 70)
-                        .clipShape(Circle())
                 }
             }
 

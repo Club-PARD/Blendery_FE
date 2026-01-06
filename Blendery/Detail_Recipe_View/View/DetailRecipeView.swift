@@ -22,7 +22,7 @@ struct DetailRecipeView: View {
     @StateObject private var searchVM = SearchBarViewModel()
     @FocusState private var isSearchFieldFocused: Bool
     
-    private struct RecipeNavID: Identifiable, Hashable {
+    private struct RecipeNavID: Identifiable, Hashable { 
         let id: UUID
     }
     
@@ -34,7 +34,8 @@ struct DetailRecipeView: View {
             VStack(spacing: 0) {
                 RecipeTitle(
                     menu: menu,
-                    optionTags: vm.optionBadgeTags
+                    optionTags: vm.optionBadgeTags,
+                    thumbnailURL: currentThumbnailURL
                 )
                     .padding(22)
                 
@@ -42,18 +43,28 @@ struct DetailRecipeView: View {
 //                RecipeStepList(steps: vm.currentSteps)
 //                    .padding(16)
                 
-                RecipeStepList(steps: vm.currentSteps, bottomInset: 200)
-                    .padding(16)
+                ScreenshotShield {
+                    RecipeStepList(steps: vm.currentSteps, bottomInset: 200)
+                }
+                .padding(16)
+                .frame(maxWidth: .infinity, maxHeight: .infinity) // ✅ 스크롤 영역 높이 확보
+                .clipped()
                 
                 Spacer(minLength: 0)
             }
             
-            // ✅ (메인페이지처럼) 검색 포커스면 전체 메뉴 리스트 오버레이
             if searchVM.isFocused {
-                searchOverlay
-                    .transition(.opacity)
-                    .zIndex(50)
+                RecipeSearchOverlayView(
+                    searchVM: searchVM,
+                    focus: $isSearchFieldFocused,
+                    onSelect: { recipeId in
+                        selectedRecipe = RecipeNavID(id: recipeId)
+                    }
+                )
+                .transition(.opacity)
+                .zIndex(50)
             }
+
         }
         .overlay(alignment: .bottomTrailing) {
             if !searchVM.isFocused {   // ✅ 검색중이면 숨김
@@ -184,22 +195,29 @@ private extension DetailRecipeView {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder),
                                         to: nil, from: nil, for: nil)
     }
+    
+    private var currentThumbnailURL: URL? {
+        let s = (vm.selectedTemperature == .hot) ? menu.hotThumbnailUrl : menu.iceThumbnailUrl
+        guard let s, !s.isEmpty else { return nil }
+        return URL(string: s)
+    }
 }
 
 private struct SearchResultRow: View {
     let title: String
     let subtitle: String
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 6) {
             Text(title).font(.headline)
             Text(subtitle).font(.subheadline).foregroundColor(.gray)
-            Divider()
         }
+        .frame(maxWidth: .infinity, alignment: .leading)
         .padding(.horizontal, 16)
         .padding(.vertical, 12)
     }
 }
+
 
 
 #Preview {

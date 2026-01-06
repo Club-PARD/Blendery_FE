@@ -101,27 +101,29 @@ struct Mainpage_View: View {
                 )
                 .background(Color.white)
 
-                Mainpage_ScrollView(
-                    // 뷰 상태 전달
-                    // 서버와 직접 무관
-                    // 카테고리별 서버 조회 구조라면 서버 요청 조건 역할
-                    selectedCategory: selectedCategory,
-
-                    // 서버 연결 핵심 후보
-                    // 내부에서 메뉴 목록 제공, 즐겨찾기 토글 같은 서버 연동 작업이 들어갈 가능성 큼
-                    vm: vm,
-
-                    // 뷰 이벤트 전달
-                    // 메뉴 선택 시 상세 이동을 위해 상태 갱신
-                    // 서버와 무관
-                    onSelectMenu: { menu in
-                        selectedRecipe = RecipeNavID(id: menu.id)
+                ScreenshotShield {
+                    Mainpage_ScrollView(
+                        selectedCategory: selectedCategory,
+                        vm: vm,
+                        onSelectMenu: { menu in
+                            selectedRecipe = RecipeNavID(id: menu.id)
+                        }
+                    )
+                }
+                .frame(maxWidth: .infinity, maxHeight: .infinity) // ✅ 리스트 영역 꽉 채우기(중요)
+                .id(selectedCategory)
+                .onChange(of: selectedCategory) { newCategory in
+                    Task {
+                        if newCategory == "즐겨찾기" { return }
+                        let serverCategory = vm.serverCategory(from: newCategory)
+                        await vm.fetchRecipes(
+                            franchiseId: "ac120003-9b6e-19e0-819b-6e8a08870001",
+                            category: serverCategory
+                        )
                     }
-                )
+                }
 
-                // 뷰 리프레시 트리거
-                // 카테고리 바뀔 때 스크롤 뷰 상태 초기화 목적
-                // 서버와 무관
+                
                 .id(selectedCategory)
                 .onChange(of: selectedCategory) { newCategory in
                     Task {
@@ -145,15 +147,12 @@ struct Mainpage_View: View {
             // 뷰 상태 기반
             // 서버와 무관
             if searchVM.isFocused {
-
-                Mainpage_SearchOverlayView(
+                RecipeSearchOverlayView(
                     searchVM: searchVM,
-                    results: searchVM.results.map { MenuCardModel.fromSearch($0) },
-                    onSelectMenu: { menu in
-                        selectedRecipe = RecipeNavID(id: menu.id)
-                    },
-                    onToggleBookmark: { vm.toggleBookmark(id: $0) },
-                    focus: $isSearchFieldFocused
+                    focus: $isSearchFieldFocused,
+                    onSelect: { recipeId in
+                        selectedRecipe = RecipeNavID(id: recipeId)
+                    }
                 )
                 .transition(.opacity)
                 .zIndex(50)
@@ -178,6 +177,7 @@ struct Mainpage_View: View {
 
                         // UI 안전영역 처리
                         // 서버와 무관
+                        
                         Color.white
                             .frame(height: geo.safeAreaInsets.top)
 
@@ -258,26 +258,20 @@ struct Mainpage_View: View {
                 VStack(spacing: 0) {
 
                     SearchBarView(
-                        // 검색 상태 오브젝트
-                        // 서버와 직접 무관
                         vm: searchVM,
-
-                        // UI 문자열
-                        // 서버와 무관
                         placeholder: "검색",
-
-                        // 현재는 출력만
-                        // 서버 검색 연동 시 여기서 서버 검색 트리거로 바뀔 수 있음
                         onSearchTap: { print("검색:", searchVM.text) },
-
-                        // 키보드 포커스 바인딩
-                        // 서버와 무관
                         focus: $isSearchFieldFocused
                     )
                     
                     .padding(.horizontal, 16)
                     .padding(.top, 10)
                     .padding(.bottom, 12)
+                    
+                    .disabled(showStoreModal)
+                    .allowsHitTesting(!showStoreModal)
+                    .opacity(showStoreModal ? 0.35 : 1.0)
+                    .animation(.easeInOut(duration: 0.18), value: showStoreModal)
 
                     // 안전영역 하단 패딩 처리
                     // 서버와 무관

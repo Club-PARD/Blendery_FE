@@ -9,39 +9,39 @@ import SwiftUI
 import UIKit
 
 struct MenuListRow: View {
-
+    
     // 서버 데이터
     // 한 줄에 표시할 메뉴 데이터
     let model: MenuCardModel
-
+    
     // 서버 호출
     // 즐겨찾기 같은 상태 변경 트리거
     let onToggleBookmark: () -> Void
-
+    
     // 화면 이동용 이벤트
     let onSelect: () -> Void
-
+    
     var body: some View {
         Button(action: onSelect) {
             HStack(spacing: 12) {
-
+                
                 // UI 이미지 표시 로직
                 rowImage
                     .frame(width: 44, height: 44)
                     .clipShape(RoundedRectangle(cornerRadius: 10))
-
+                
                 VStack(alignment: .leading, spacing: 4) {
                     Text(model.category)
                         .font(.system(size: 12))
                         .foregroundColor(.gray)
-
+                    
                     Text(model.title)
                         .font(.system(size: 16, weight: .semibold))
                         .foregroundColor(.black)
                 }
-
+                
                 Spacer()
-
+                
                 Image(systemName: "chevron.right")
                     .font(.system(size: 14, weight: .semibold))
                     .foregroundColor(.gray)
@@ -53,9 +53,20 @@ struct MenuListRow: View {
         }
         .buttonStyle(.plain)
     }
-
+    
+    private var thumbnailURL: URL? {
+        // 1) HOT 우선
+        if let s = model.hotThumbnailUrl, !s.isEmpty, let url = URL(string: s) {
+            return url
+        }
+        // 2) HOT 없으면 ICE로 fallback
+        if let s = model.iceThumbnailUrl, !s.isEmpty, let url = URL(string: s) {
+            return url
+        }
+        return nil
+    }
+    
     private var rowImage: some View {
-
         // 이미지 로딩 상태값
         // 서버 이미지 로딩과 연관 가능성은 있지만 여기서는 표시만 분기
         if model.isImageLoading {
@@ -69,11 +80,35 @@ struct MenuListRow: View {
                 }
             )
         }
-
-        // UI용 이미지 이름 결정
+        if let url = thumbnailURL {
+            return AnyView(
+                AsyncImage(url: url) { phase in
+                    switch phase {
+                    case .empty:
+                        ZStack {
+                            Color(red: 0.95, green: 0.95, blue: 0.95)
+                            ProgressView()
+                        }
+                        
+                    case .success(let image):
+                        image
+                            .resizable()
+                            .scaledToFill()
+                        
+                    default:
+                        // 실패 시 기존 placeholder
+                        ZStack {
+                            Color(red: 0.95, green: 0.95, blue: 0.95)
+                            Image("loading")
+                                .resizable()
+                                .scaledToFit()
+                                .padding(8)
+                        }
+                    }
+                }
+            )
+        }
         let name = model.imageName ?? model.title
-
-        // 번들 이미지 확인
         if UIImage(named: name) != nil {
             return AnyView(
                 Image(name)
@@ -81,7 +116,7 @@ struct MenuListRow: View {
                     .scaledToFill()
             )
         }
-
+        
         // 기본 플레이스홀더
         return AnyView(
             ZStack {

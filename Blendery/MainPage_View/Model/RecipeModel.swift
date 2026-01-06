@@ -11,6 +11,10 @@ struct RecipeModel: Codable, Identifiable, Hashable {
     let recipeId: UUID
     let title: String
     let category: String
+    
+    let hotThumbnailUrl: String?
+    let iceThumbnailUrl: String?
+    
     let variants: [RecipeVariantModel]
     
     var id: UUID { recipeId }
@@ -117,7 +121,9 @@ extension MenuCardModel {
             recipesByOption: recipesByOption,            // ⭐️ 핵심
             isBookmarked: false,
             isImageLoading: false,
-            imageName: nil
+            imageName: nil,
+            hotThumbnailUrl: recipe.hotThumbnailUrl,
+            iceThumbnailUrl: recipe.iceThumbnailUrl
         )
     }
     

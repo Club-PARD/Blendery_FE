@@ -30,6 +30,9 @@ struct MenuCardModel: Identifiable, Hashable {
     var isImageLoading: Bool
     var imageName: String?
     
+    let hotThumbnailUrl: String?
+    let iceThumbnailUrl: String?
+    
     let recipesByOption: [String: [RecipeStep]]
 
     init(
@@ -42,7 +45,9 @@ struct MenuCardModel: Identifiable, Hashable {
         recipesByOption: [String: [RecipeStep]] = [:],
         isBookmarked: Bool,
         isImageLoading: Bool = false,
-        imageName: String? = nil
+        imageName: String? = nil,
+        hotThumbnailUrl: String? = nil,
+        iceThumbnailUrl: String? = nil
     ) {
         self.id = id
         self.category = category
@@ -54,5 +59,7 @@ struct MenuCardModel: Identifiable, Hashable {
         self.isBookmarked = isBookmarked
         self.isImageLoading = isImageLoading
         self.imageName = imageName
+        self.hotThumbnailUrl = hotThumbnailUrl
+        self.iceThumbnailUrl = iceThumbnailUrl
     }
 }
