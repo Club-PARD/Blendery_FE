@@ -10,22 +10,18 @@ import SwiftUI
 
 @main
 struct BlenderyApp: App {
+    
     @Environment(\.scenePhase) private var scenePhase
     
     var body: some Scene {
         WindowGroup {
-            //            Mainpage_View()
-            NavigationStack {
-                OnboardingAnimationView()
-                    .ignoresSafeArea(.keyboard, edges: .all)
-                    .onChange(of: scenePhase) { phase in
-                        UIApplication.shared.isIdleTimerDisabled = (phase == .active)
-                    }
-               
-                    .onAppear {
-                        UIApplication.shared.isIdleTimerDisabled = true
-                    }
-            }
+            RootView()
+                .onChange(of: scenePhase) { phase in
+                    UIApplication.shared.isIdleTimerDisabled = (phase == .active)
+                }
+                .onAppear() {
+                    UIApplication.shared.isIdleTimerDisabled = true
+                }
         }
     }
 }

@@ -8,6 +8,7 @@
 import SwiftUI
 
 struct LoginView: View {
+    var onLoginSuccess: (() -> Void)?
 
     // ✅ 화면 전체에서 VM 1개만 사용
     @StateObject private var vm = LoginViewModel()
@@ -27,6 +28,12 @@ struct LoginView: View {
         }
         .frame(maxWidth: .infinity)
         .padding(.horizontal, 50)
+        
+        .onChange(of: vm.isLoggedIn) { loggedIn in
+            if loggedIn {
+                onLoginSuccess?()
+            }
+        }
     }
 }
 
