@@ -8,7 +8,6 @@
 
 /* Begin PBXBuildFile section */
 		B797858D2EFBBE3E00128229 /* .gitignore in Resources */ = {isa = PBXBuildFile; fileRef = B797858C2EFBBE3E00128229 /* .gitignore */; };
-		BF5EA6D72F0E525600CDEC80 /* BaseURL.swift in Sources */ = {isa = PBXBuildFile; fileRef = BF5EA6D62F0E525600CDEC80 /* BaseURL.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -33,7 +32,6 @@
 		B797856F2EFBBD9D00128229 /* BlenderyTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BlenderyTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B79785792EFBBD9D00128229 /* BlenderyUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = BlenderyUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		B797858C2EFBBE3E00128229 /* .gitignore */ = {isa = PBXFileReference; lastKnownFileType = text; path = .gitignore; sourceTree = "<group>"; };
-		BF5EA6D62F0E525600CDEC80 /* BaseURL.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseURL.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -95,7 +93,6 @@
 		B79785592EFBBD9B00128229 = {
 			isa = PBXGroup;
 			children = (
-				BF5EA6D62F0E525600CDEC80 /* BaseURL.swift */,
 				B797858C2EFBBE3E00128229 /* .gitignore */,
 				B79785642EFBBD9B00128229 /* Blendery */,
 				B79785722EFBBD9D00128229 /* BlenderyTests */,
@@ -259,7 +256,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				BF5EA6D72F0E525600CDEC80 /* BaseURL.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
