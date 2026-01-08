@@ -19,15 +19,13 @@ struct LoginView: View {
             // ✅ 같은 vm을 주입
             Login_ID_PW(viewModel: vm)
 
-            Login_AutoLogin()
-                .frame(maxWidth: .infinity, alignment: .center)
-                .padding(.vertical, 16)
-
             // ✅ 같은 vm을 주입
             Login_Button(viewModel: vm)
+                .padding(.top, 18)
         }
         .frame(maxWidth: .infinity)
         .padding(.horizontal, 50)
+        .offset(y: -16)
         
         .onChange(of: vm.isLoggedIn) { loggedIn in
             if loggedIn {

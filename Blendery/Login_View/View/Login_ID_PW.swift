@@ -47,7 +47,7 @@ struct Login_ID_PW: View {
             }
             .background(Color(red: 0.15, green: 0.15, blue: 0.15))
             .cornerRadius(30)
-            .frame(width: 310, height: 45)
+            .frame(width: 310, height: 40)
             .overlay(
                 RoundedRectangle(cornerRadius: 30)
                     .stroke(Color(red: 0.15, green: 0.15, blue: 0.15), lineWidth: 1)

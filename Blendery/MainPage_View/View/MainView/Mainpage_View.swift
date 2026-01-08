@@ -7,6 +7,7 @@ import SwiftUI
 import UIKit
 
 struct Mainpage_View: View {
+    var onLogout: (() -> Void)? = nil
     
     // 뷰 상태 변수
     @State private var showStoreModal: Bool = false
@@ -51,10 +52,11 @@ struct Mainpage_View: View {
     // 상단 카테고리 메뉴 데이터 소스
     // 보통은 로컬 상수지만 서버에서 카테고리를 내려주는 구조면 서버 데이터가 될 수도 있음
     @StateObject private var topMenuVM: TopMenuViewModel
-    init() {
-        // 화면 구성용 초기화
-        // 서버와 무관
-        _topMenuVM = StateObject(wrappedValue: TopMenuViewModel(categories: categories))
+    init(onLogout: (() -> Void)? = nil) {
+        self.onLogout = onLogout
+        _topMenuVM = StateObject(
+            wrappedValue: TopMenuViewModel(categories: categories)
+        )
     }
     
     // 뷰 포커스 상태
@@ -214,7 +216,8 @@ struct Mainpage_View: View {
                     joinedAt: "2010.12.25~",
                     phone: "010-7335-1790",
                     email: "l_oxo_l@handong.ac.kr"
-                )
+                ),
+                onLogout: onLogout
             )
         }
         
@@ -332,11 +335,5 @@ private struct RoundedCorner: Shape {
 extension ProcessInfo {
     var isPreview: Bool {
         environment["XCODE_RUNNING_FOR_PREVIEWS"] == "1"
-    }
-}
-
-#Preview {
-    NavigationStack {
-        Mainpage_View()
     }
 }

@@ -28,7 +28,7 @@ struct Login_Button: View {
                         .fontWeight(.semibold)
                 }
             }
-            .frame(width: 300, height: 45)
+            .frame(width: 300, height: 40)
             .background(Color.white)
             .foregroundColor(.black)
             .cornerRadius(30)

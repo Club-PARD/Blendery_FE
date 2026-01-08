@@ -1,6 +1,8 @@
 import SwiftUI
 
 struct OnboardingAnimationView: View {
+    var onLoginSuccess: (() -> Void)?
+    
     @State private var didSetup = false
     @State private var baseSize: CGSize = .zero
     @State private var baseInsets: EdgeInsets = .init()
@@ -42,7 +44,7 @@ struct OnboardingAnimationView: View {
                 Color.black.ignoresSafeArea()
 
                 ZStack {
-                    LoginView()
+                    LoginView(onLoginSuccess: onLoginSuccess)
                         .frame(width: width)
                         .position(x: width / 2, y: loginBlockY)
                         .opacity(showLoginUI ? 1 : 0)
@@ -57,7 +59,7 @@ struct OnboardingAnimationView: View {
                 }
                 .offset(y: wholeYOffset)
             }
-            .ignoresSafeArea(.keyboard, edges: .all)
+            
             .onAppear {
                 guard !didSetup else { return }
                 didSetup = true
@@ -78,12 +80,6 @@ struct OnboardingAnimationView: View {
                 }
             }
         }
-    }
-}
-
-#Preview("Onboarding - in NavigationStack") {
-    NavigationStack {
-        OnboardingAnimationView()
-            .navigationBarHidden(true)
+        .ignoresSafeArea(.keyboard, edges: .all)
     }
 }

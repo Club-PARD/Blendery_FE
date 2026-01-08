@@ -12,15 +12,21 @@ struct RootView: View {
     @State private var isLoggedIn = false
     
     var body: some View {
-        Group {
-            if isLoggedIn {
-                Mainpage_View()
-            } else {
-                LoginView(
-                    onLoginSuccess: {
-                        isLoggedIn = true
-                    }
-                )
+        NavigationStack {
+            Group {
+                if isLoggedIn {
+                    Mainpage_View(
+                        onLogout: {
+                            logout()
+                        }
+                    )
+                } else {
+                    OnboardingAnimationView(
+                        onLoginSuccess: {
+                            isLoggedIn = true
+                        }
+                    )
+                }
             }
         }
         .onAppear {
@@ -39,5 +45,14 @@ struct RootView: View {
         
         print("✅ 자동 로그인 성공")
         isLoggedIn = true
+    }
+    
+    private func logout() {
+        guard let userId = SessionManager.shared.currentUserId else { return }
+        KeychainHelper.shared.deleteToken(for: userId)
+        SessionManager.shared.currentUserId = nil
+        
+        isLoggedIn = false
+        print("로그아웃 완료")
     }
 }

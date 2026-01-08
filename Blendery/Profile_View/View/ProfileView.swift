@@ -15,16 +15,22 @@ struct ProfileView: View {
     @State private var showContactEdit = false
     @State private var contactType: ContactEditType?
     
-    init(profile: UserProfile) {
+    var onLogout: (() -> Void)?
+    
+    init(
+        profile: UserProfile,
+        onLogout: (() -> Void)? = nil   // ⭐️ 추가
+    ) {
         _viewModel = StateObject(
             wrappedValue: ProfileViewModel(profile: profile)
         )
+        self.onLogout = onLogout        // ⭐️ 핵심
     }
     
     var body: some View {
         VStack {
             ZStack {
-                VStack(spacing: 24) {
+                VStack(spacing: 16) {
                     ProfileCard(
                         viewModel: viewModel,
                         showEditButton: true,
@@ -35,6 +41,18 @@ struct ProfileView: View {
                         nameView: nil
                     )
                     infoCard
+                    
+                    HStack {
+                        Spacer()
+                        Button {
+                            onLogout?()
+                        } label: {
+                            Text("로그아웃")
+                                .foregroundColor(.red)
+                                .font(.system(size: 14, weight: .medium))
+                        }
+                        .padding(.trailing, 10)
+                    }
                     Spacer()
                     
                     if viewModel.isPhotoEditSheetVisible {
