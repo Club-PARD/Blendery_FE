@@ -31,6 +31,10 @@ struct Mainpage_View: View {
     }
     @State private var selectedRecipe: RecipeNavID? = nil
     
+    private var userId: String {
+        SessionManager.shared.currentUserId ?? ""
+    }
+    
     
     // 상태 오브젝트
     // 메인 화면 데이터 소스 역할
@@ -131,6 +135,7 @@ struct Mainpage_View: View {
                         if newCategory == "즐겨찾기" { return }
                         let serverCategory = vm.serverCategory(from: newCategory)
                         await vm.fetchRecipes(
+                            userId: userId,
                             franchiseId: "ac120003-9b6e-19e0-819b-6e8a08870001",
                             category: serverCategory
                         )
@@ -218,7 +223,7 @@ struct Mainpage_View: View {
         }
         
         .navigationDestination(item: $selectedRecipe) { nav in
-            DetailRecipeViewByID(recipeId: nav.id)
+            DetailRecipeViewByID(recipeId: nav.id, userId: userId)
         }
         
         // 뷰 상태 업데이트

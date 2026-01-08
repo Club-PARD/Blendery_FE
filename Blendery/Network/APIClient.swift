@@ -14,13 +14,40 @@ final class APIClient {
     
     private let baseURL = BaseURL.baseUrl.rawValue
     
+    private func makeAuthorizedRequest(
+        url: URL,
+        userId: String
+    ) throws -> URLRequest {
+        
+        guard let token = KeychainHelper.shared.readToken(for: userId) else {
+            throw URLError(.userAuthenticationRequired)
+        }
+        
+        var request = URLRequest(url: url)
+        request.setValue(
+            "Bearer \(token)",
+            forHTTPHeaderField: "Authorization"
+        )
+        request.setValue(
+            "application/json",
+            forHTTPHeaderField: "Accept"
+        )
+        
+        //디버그용 (잘 되면 삭제)
+        print("🔐 Authorization: Bearer \(token.prefix(20))...")
+        
+        return request
+    }
+    
     func fetchRecipes(
+        userId: String,
         franchiseId: String,
         category: String? = nil,
         favorite: Bool? = nil
     ) async throws -> [RecipeModel] {
         
         var components = URLComponents(string: "\(baseURL)/api/recipe/recipes")!
+        
         var queryItems: [URLQueryItem] = [
             URLQueryItem(name: "franchiseId", value: franchiseId)
         ]
@@ -43,7 +70,9 @@ final class APIClient {
             throw URLError(.badURL)
         }
         
-        let (data, response) = try await URLSession.shared.data(from: url)
+        let request = try makeAuthorizedRequest(url: url, userId: userId)
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
         
         if let http = response as? HTTPURLResponse {
             print("📡 statusCode:", http.statusCode)
@@ -60,7 +89,10 @@ final class APIClient {
         return try JSONDecoder().decode([RecipeModel].self, from: data)
     }
     
-    func searchRecipes(keyword: String) async throws -> [SearchRecipeModel] {
+    func searchRecipes(
+        userId: String,
+        keyword: String
+    ) async throws -> [SearchRecipeModel] {
         
         var components = URLComponents(
             string: "\(baseURL)/api/recipe/search/recipes"
@@ -70,8 +102,13 @@ final class APIClient {
             URLQueryItem(name: "keyword", value: keyword)
         ]
         
-        let url = components.url!
-        let (data, response) = try await URLSession.shared.data(from: url)
+        guard let url = components.url else {
+            throw URLError(.badURL)
+        }
+        
+        let request = try makeAuthorizedRequest(url: url, userId: userId)
+        
+        let (data, response) = try await URLSession.shared.data(for: request)
         
         guard let http = response as? HTTPURLResponse,
               (200...299).contains(http.statusCode)
@@ -82,11 +119,16 @@ final class APIClient {
         return try JSONDecoder().decode([SearchRecipeModel].self, from: data)
     }
     
-    func fetchRecipeDetail(recipeId: UUID) async throws -> RecipeModel {
-        // ✅ 기존 엔드포인트 패턴 그대로 유지
+    func fetchRecipeDetail(
+        userId: String,
+        recipeId: UUID
+    ) async throws -> RecipeModel {
+        
         let url = URL(string: "\(baseURL)/api/recipe/\(recipeId.uuidString)")!
+        
+        let request = try makeAuthorizedRequest(url: url, userId: userId)
 
-        let (data, response) = try await URLSession.shared.data(from: url)
+        let (data, response) = try await URLSession.shared.data(for: request)
 
         guard let http = response as? HTTPURLResponse,
               (200...299).contains(http.statusCode)

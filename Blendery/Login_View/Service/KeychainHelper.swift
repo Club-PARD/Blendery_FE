@@ -1,49 +1,34 @@
-//
-//  KeychainService.swift
-//  Blendery
-//
-//  Created by 박성준 on 12/24/25.
-//
-
 import Foundation
 import Security
 
 final class KeychainHelper {
+
     static let shared = KeychainHelper()
-    private let serviceName = "com.blendary.app" // 앱 식별자
+    private init() {}
 
-    // ✅ 토큰은 한 개만 쓸 거라 account를 고정 키로 사용
-    private let tokenAccount = "accessToken"
+    private let serviceName = "com.blendery.app"
 
-    // 1. 토큰 저장 (Save)
-    func saveToken(token: String) {
+    // MARK: - Save
+    func saveToken(_ token: String, for userId: String) {
         let data = Data(token.utf8)
 
-        // ✅ 기존 데이터 삭제 (service + account 기준)
-        let deleteQuery: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: serviceName,
-            kSecAttrAccount as String: tokenAccount
-        ]
-        SecItemDelete(deleteQuery as CFDictionary)
-
-        // ✅ 새 데이터 추가
-        let addQuery: [String: Any] = [
-            kSecClass as String: kSecClassGenericPassword,
-            kSecAttrService as String: serviceName,
-            kSecAttrAccount as String: tokenAccount,
-            kSecValueData as String: data
-        ]
-        SecItemAdd(addQuery as CFDictionary, nil)
-    }
-
-    // 2. 토큰 읽기 (Read)
-    // ✅ 기존 시그니처 유지(하지만 내부는 tokenAccount 사용)
-    func readToken(account: String) -> String? {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: serviceName,
-            kSecAttrAccount as String: tokenAccount,
+            kSecAttrAccount as String: userId,   // 🔑 유저 구분
+            kSecValueData as String: data
+        ]
+
+        SecItemDelete(query as CFDictionary)
+        SecItemAdd(query as CFDictionary, nil)
+    }
+
+    // MARK: - Read
+    func readToken(for userId: String) -> String? {
+        let query: [String: Any] = [
+            kSecClass as String: kSecClassGenericPassword,
+            kSecAttrService as String: serviceName,
+            kSecAttrAccount as String: userId,
             kSecReturnData as String: true,
             kSecMatchLimit as String: kSecMatchLimitOne
         ]
@@ -51,19 +36,25 @@ final class KeychainHelper {
         var item: CFTypeRef?
         let status = SecItemCopyMatching(query as CFDictionary, &item)
 
-        if status == errSecSuccess, let data = item as? Data {
-            return String(data: data, encoding: .utf8)
+        guard
+            status == errSecSuccess,
+            let data = item as? Data,
+            let token = String(data: data, encoding: .utf8)
+        else {
+            return nil
         }
-        return nil
+
+        return token
     }
 
-    // 3. 토큰 삭제 (Delete - 로그아웃 시 사용)
-    func deleteToken() {
+    // MARK: - Delete
+    func deleteToken(for userId: String) {
         let query: [String: Any] = [
             kSecClass as String: kSecClassGenericPassword,
             kSecAttrService as String: serviceName,
-            kSecAttrAccount as String: tokenAccount
+            kSecAttrAccount as String: userId
         ]
+
         SecItemDelete(query as CFDictionary)
     }
 }

@@ -9,6 +9,8 @@ import SwiftUI
 
 struct DetailRecipeViewByID: View {
     let recipeId: UUID
+    let userId: String
+    
     @StateObject private var vm = DetailRecipeViewModel()
     
     var body: some View {
@@ -33,7 +35,7 @@ struct DetailRecipeViewByID: View {
             }
         }
         .task {
-            await vm.fetchRecipeDetail(recipeId: recipeId)
+            await vm.fetchRecipeDetail(userId: userId, recipeId: recipeId)
         }
     }
 }

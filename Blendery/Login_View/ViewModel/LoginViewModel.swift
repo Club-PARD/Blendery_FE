@@ -57,8 +57,11 @@ final class LoginViewModel: ObservableObject {
             do {
                 let token = try await authService.login(request: request)
 
+                let userId = trimmedEmail
+                
                 // 토큰 저장
-                KeychainHelper.shared.saveToken(token: token)
+                KeychainHelper.shared.saveToken(token, for: userId)
+                SessionManager.shared.currentUserId = userId
 
                 // 로그인 성공
                 isLoggedIn = true

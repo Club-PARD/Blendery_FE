@@ -26,6 +26,10 @@ struct DetailRecipeView: View {
         let id: UUID
     }
     
+    private var userId: String {
+        SessionManager.shared.currentUserId ?? ""
+    }
+    
     @State private var selectedRecipe: RecipeNavID? = nil
     
     var body: some View {
@@ -111,7 +115,8 @@ struct DetailRecipeView: View {
         // ✅ 검색 결과 눌러서 다른 메뉴 상세로 이동
         .navigationDestination(item: $selectedRecipe) { nav in
             DetailRecipeViewByID(
-                recipeId: nav.id
+                recipeId: nav.id,
+                userId: userId
             )
         }
         // ✅ FocusState 동기화(메인페이지 방식)

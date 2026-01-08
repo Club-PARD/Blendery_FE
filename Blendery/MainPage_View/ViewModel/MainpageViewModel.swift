@@ -31,6 +31,7 @@ final class MainpageViewModel: ObservableObject {
     init() {}
 
     func fetchRecipes(
+        userId: String,
         franchiseId: String,
         category: String? = nil,
         favorite: Bool? = nil
@@ -38,6 +39,7 @@ final class MainpageViewModel: ObservableObject {
 
         do {
             let recipes = try await APIClient.shared.fetchRecipes(
+                userId: userId,
                 franchiseId: franchiseId,
                 category: category,
                 favorite: favorite
@@ -121,6 +123,10 @@ final class SearchBarViewModel: ObservableObject {
     // ⭐️ 추가
     @Published var results: [SearchRecipeModel] = []
     @Published var isLoading: Bool = false
+    
+    private var userId: String? {
+        SessionManager.shared.currentUserId
+    }
 
     var hasText: Bool {
         !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
@@ -140,7 +146,10 @@ final class SearchBarViewModel: ObservableObject {
 
     // ⭐️ 서버 검색
     func search() async {
-        guard hasText else {
+        guard
+            let userId,
+            hasText
+        else {
             results = []
             return
         }
@@ -150,6 +159,7 @@ final class SearchBarViewModel: ObservableObject {
 
         do {
             results = try await APIClient.shared.searchRecipes(
+                userId: userId,
                 keyword: text
             )
         } catch {

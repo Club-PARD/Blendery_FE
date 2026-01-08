@@ -34,13 +34,16 @@ final class DetailRecipeViewModel: ObservableObject {
     }
     
     // MARK: - API
-    func fetchRecipeDetail(recipeId: UUID) async {
+    func fetchRecipeDetail(
+        userId: String,
+        recipeId: UUID
+    ) async {
         isLoading = true
         errorMessage = nil
         defer { isLoading = false }
         
         do {
-            let recipe = try await APIClient.shared.fetchRecipeDetail(recipeId: recipeId)
+            let recipe = try await APIClient.shared.fetchRecipeDetail(userId: userId, recipeId: recipeId)
             menu = MenuCardModel.from(recipe)
             
             // ✅ 여기서 확인용 print
