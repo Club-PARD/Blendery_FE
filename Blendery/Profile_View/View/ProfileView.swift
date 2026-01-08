@@ -14,6 +14,7 @@ struct ProfileView: View {
     @State private var showNameEdit = false
     @State private var showContactEdit = false
     @State private var contactType: ContactEditType?
+    @State private var showLogoutPopup = false
     
     var onLogout: (() -> Void)?
     
@@ -45,7 +46,7 @@ struct ProfileView: View {
                     HStack {
                         Spacer()
                         Button {
-                            onLogout?()
+                            showLogoutPopup = true
                         } label: {
                             Text("로그아웃")
                                 .foregroundColor(.red)
@@ -75,7 +76,27 @@ struct ProfileView: View {
                     }
                     .padding(.bottom)
                 }
+                if showLogoutPopup {
+                    Color.black.opacity(0.4)
+                        .ignoresSafeArea()
+                        .allowsHitTesting(true)
+
+                    LogoutConfirmPopup(
+                        onCancel: {
+                            showLogoutPopup = false
+                        },
+                        onConfirm: {
+                            showLogoutPopup = false
+                            onLogout?()   // ⭐️ 여기서 RootView로 전달
+                        }
+                    )
+                }
             }
+            .navigationTitle("프로필")
+            .navigationBarTitleDisplayMode(.inline)
+            .navigationBarBackButtonHidden(showLogoutPopup)
+            .interactiveDismissDisabled(showLogoutPopup)
+            
             .photosPicker(
                 isPresented: $viewModel.showPhotoPicker,
                 selection: $viewModel.selectedItem,
