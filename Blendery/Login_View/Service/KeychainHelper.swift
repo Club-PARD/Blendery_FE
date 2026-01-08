@@ -54,7 +54,7 @@ final class KeychainHelper {
             kSecAttrService as String: serviceName,
             kSecAttrAccount as String: userId
         ]
-
         SecItemDelete(query as CFDictionary)
+        print("delete token")
     }
 }

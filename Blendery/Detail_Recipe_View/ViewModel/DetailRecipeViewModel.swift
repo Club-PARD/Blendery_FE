@@ -43,7 +43,7 @@ final class DetailRecipeViewModel: ObservableObject {
         defer { isLoading = false }
         
         do {
-            let recipe = try await APIClient.shared.fetchRecipeDetail(userId: userId, recipeId: recipeId)
+            let recipe = try await APIClient.shared.fetchRecipeDetail(recipeId: recipeId)
             menu = MenuCardModel.from(recipe)
             
             // ✅ 여기서 확인용 print

@@ -39,7 +39,6 @@ final class MainpageViewModel: ObservableObject {
 
         do {
             let recipes = try await APIClient.shared.fetchRecipes(
-                userId: userId,
                 franchiseId: franchiseId,
                 category: category,
                 favorite: favorite
@@ -159,7 +158,6 @@ final class SearchBarViewModel: ObservableObject {
 
         do {
             results = try await APIClient.shared.searchRecipes(
-                userId: userId,
                 keyword: text
             )
         } catch {

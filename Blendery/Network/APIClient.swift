@@ -40,12 +40,11 @@ final class APIClient {
     }
     
     func fetchRecipes(
-        userId: String,
         franchiseId: String,
         category: String? = nil,
         favorite: Bool? = nil
     ) async throws -> [RecipeModel] {
-        guard SessionManager.shared.currentUserId == userId else {
+        guard let userId = SessionManager.shared.currentUserId else {
             print("⛔️ API 차단 - 로그아웃 상태")
             return []
         }
@@ -94,10 +93,9 @@ final class APIClient {
     }
     
     func searchRecipes(
-        userId: String,
         keyword: String
     ) async throws -> [SearchRecipeModel] {
-        guard SessionManager.shared.currentUserId == userId else {
+        guard let userId = SessionManager.shared.currentUserId else {
             print("⛔️ API 차단 - 로그아웃 상태")
             return []
         }
@@ -128,10 +126,9 @@ final class APIClient {
     }
     
     func fetchRecipeDetail(
-        userId: String,
         recipeId: UUID
     ) async throws -> RecipeModel {
-        guard SessionManager.shared.currentUserId == userId else {
+        guard let userId = SessionManager.shared.currentUserId else {
             throw URLError(.userAuthenticationRequired)
         }
         

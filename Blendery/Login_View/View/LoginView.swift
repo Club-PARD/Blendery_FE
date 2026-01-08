@@ -20,18 +20,12 @@ struct LoginView: View {
             Login_ID_PW(viewModel: vm)
 
             // ✅ 같은 vm을 주입
-            Login_Button(viewModel: vm)
+            Login_Button(viewModel: vm, onLoginSuccess: onLoginSuccess)
                 .padding(.top, 18)
         }
         .frame(maxWidth: .infinity)
         .padding(.horizontal, 50)
         .offset(y: -16)
-        
-        .onChange(of: vm.isLoggedIn) { loggedIn in
-            if loggedIn {
-                onLoginSuccess?()
-            }
-        }
     }
 }
 

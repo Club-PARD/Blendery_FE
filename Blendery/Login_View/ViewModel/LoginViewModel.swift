@@ -26,7 +26,6 @@ final class LoginViewModel: ObservableObject {
     // 상태 변수
     // - 로딩 스피너, 로그인 성공 후 화면 전환, 에러 토스트/텍스트 표시 등에 쓰임
     @Published var isLoading = false
-    @Published var isLoggedIn = false
     @Published var errorMessage: String?
 
     // 서버 변수
@@ -63,8 +62,6 @@ final class LoginViewModel: ObservableObject {
                 KeychainHelper.shared.saveToken(token, for: userId)
                 SessionManager.shared.currentUserId = userId
 
-                // 로그인 성공
-                isLoggedIn = true
                 print("로그인 성공")
 
             } catch let error as AuthError {

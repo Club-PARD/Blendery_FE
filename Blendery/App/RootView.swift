@@ -8,11 +8,10 @@
 import SwiftUI
 
 struct RootView: View {
-    
+
     @State private var isLoggedIn = false
-    @State private var loginViewID = UUID()
-    @State private var mainViewID = UUID()
-    
+    @State private var appResetID = UUID()
+
     var body: some View {
         NavigationStack {
             Group {
@@ -22,46 +21,44 @@ struct RootView: View {
                             logout()
                         }
                     )
-                    .id(mainViewID)
                 } else {
                     OnboardingAnimationView(
                         onLoginSuccess: {
                             isLoggedIn = true
-                            mainViewID = UUID()
                         }
                     )
-                    .id(loginViewID)
                 }
             }
         }
+        .id(appResetID)
         .onAppear {
             checkAutoLogin()
         }
     }
-    
+
     private func checkAutoLogin() {
         guard
             let userId = SessionManager.shared.currentUserId,
-            let _ = KeychainHelper.shared.readToken(for: userId)
+            KeychainHelper.shared.readToken(for: userId) != nil
         else {
-            print("자동 로그인 실패")
             return
         }
-        
-        print("✅ 자동 로그인 성공")
         isLoggedIn = true
     }
-    
+
     private func logout() {
-        guard let userId = SessionManager.shared.currentUserId else { return }
-        KeychainHelper.shared.deleteToken(for: userId)
+        print("🔥 logout")
+
+        if let userId = SessionManager.shared.currentUserId {
+            KeychainHelper.shared.deleteToken(for: userId)
+        }
+
         SessionManager.shared.currentUserId = nil
-        
-        mainViewID = UUID()
-        print("MainView 리셋")
-        loginViewID = UUID()
-        print("LoginView 리셋")
         isLoggedIn = false
-        print("로그아웃 완료")
+
+        appResetID = UUID()
+
+        print("✅ 완전 로그아웃")
     }
 }
+
