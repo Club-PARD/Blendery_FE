@@ -110,30 +110,33 @@ final class MainpageViewModel: ObservableObject {
     @MainActor
     func loadFavoritesForMyCafe() async {
         print("🔥 loadFavoritesForMyCafe CALLED")
-
+        
         isLoading = true
         defer { isLoading = false }
-
+        
         do {
             print("➡️ 1) calling fetchMyCafes")
             let cafes = try await APIClient.shared.fetchMyCafes()
             print("✅ 1) cafes decoded count:", cafes.count)
-
+            
             guard let cafeId = cafes.first?.cafeId else {
                 print("⛔️ cafeId is nil")
                 toast = ToastData(iconName: "exclamationmark.triangle", message: "접근 가능한 매장이 없습니다.")
                 return
             }
             print("✅ 1) using cafeId:", cafeId)
-
+            
             print("➡️ 2) calling fetchFavorites")
             let res = try await APIClient.shared.fetchFavorites(cafeId: cafeId)
             print("✅ 2) favorites decoded count:", res.favorites.count)
-
-            // ⭐️ 여기 중요: favorites는 즐겨찾기니까 isBookmarked true로 만들어주는 게 맞음
-            self.favoriteCards = res.favorites.map { MenuCardModel.fromFavorite($0) }
+            
+            // ⭐️ FavoriteRecipeItem → RecipeModel → MenuCardModel 변환
+            self.favoriteCards = res.favorites.map { favoriteItem in
+                let recipeModel = favoriteItem.toRecipeModel()
+                return MenuCardModel.fromFavorite(recipeModel)
+            }
             print("✅ 3) favoriteCards assigned:", self.favoriteCards.count)
-
+            
         } catch is CancellationError {
             print("⚠️ loadFavorites task cancelled")
         } catch {
@@ -141,17 +144,17 @@ final class MainpageViewModel: ObservableObject {
             toast = ToastData(iconName: "exclamationmark.triangle", message: "즐겨찾기 불러오기 실패")
         }
     }
-
-
+    
+    
 }
 
 //  검색창 뷰모델
 @MainActor
 final class SearchBarViewModel: ObservableObject {
-
+    
     @Published var text: String = ""
     @Published var isFocused: Bool = false
-
+    
     // ⭐️ 추가
     @Published var results: [SearchRecipeModel] = []
     @Published var isLoading: Bool = false
@@ -159,23 +162,23 @@ final class SearchBarViewModel: ObservableObject {
     private var userId: String? {
         SessionManager.shared.currentUserId
     }
-
+    
     var hasText: Bool {
         !text.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
-
+    
     func open() { isFocused = true }
     func clearText() {
         text = ""
         results = []
     }
-
+    
     func close() {
         text = ""
         results = []
         isFocused = false
     }
-
+    
     // ⭐️ 서버 검색
     func search() async {
         guard
@@ -185,10 +188,10 @@ final class SearchBarViewModel: ObservableObject {
             results = []
             return
         }
-
+        
         isLoading = true
         defer { isLoading = false }
-
+        
         do {
             results = try await APIClient.shared.searchRecipes(
                 keyword: text
@@ -205,7 +208,7 @@ final class SearchBarViewModel: ObservableObject {
 @MainActor
 final class TopMenuViewModel: ObservableObject {
     @Published var categoryFrames: [String: CGRect] = [:]
-
+    
     let categories: [String]
     
     private let favoriteRed = Color(red: 238/255, green: 34/255, blue: 42/255)
@@ -236,9 +239,9 @@ final class TopMenuViewModel: ObservableObject {
             return .black
         }
     }
-
+    
     var favoriteKey: String { categories.first ?? "즐겨찾기" }
-
+    
     func isFavorite(_ category: String) -> Bool {
         category == favoriteKey
     }

@@ -24,6 +24,7 @@ struct RootView: View {
                 } else {
                     OnboardingAnimationView(
                         onLoginSuccess: {
+                            print("🚨 onLoginSuccess CALLED")
                             isLoggedIn = true
                         }
                     )
@@ -34,31 +35,44 @@ struct RootView: View {
         .onAppear {
             checkAutoLogin()
         }
+        .onChange(of: isLoggedIn) { newValue in
+            print("🧭 RootView isLoggedIn ->", newValue)
+        }
     }
+    
 
     private func checkAutoLogin() {
-        guard
-            let userId = SessionManager.shared.currentUserId,
-            KeychainHelper.shared.readToken(for: userId) != nil
-        else {
-            return
-        }
+        let userId = SessionManager.shared.currentUserId
+        let token = userId.flatMap { KeychainHelper.shared.readToken(for: $0) }
+
+        print("🧪 autoLogin check | userId:", userId ?? "nil",
+              "| token exists:", token != nil)
+
+        guard let userId, token != nil else { return }
         isLoggedIn = true
     }
 
     private func logout() {
         print("🔥 logout")
 
-        if let userId = SessionManager.shared.currentUserId {
+        let beforeUserId = SessionManager.shared.currentUserId
+        let beforeToken = beforeUserId.flatMap { KeychainHelper.shared.readToken(for: $0) }
+        print("🧪 before | userId:", beforeUserId ?? "nil", "| token exists:", beforeToken != nil)
+
+        if let userId = beforeUserId {
             KeychainHelper.shared.deleteToken(for: userId)
         }
 
+        let afterDeleteToken = beforeUserId.flatMap { KeychainHelper.shared.readToken(for: $0) }
+        print("🧪 after deleteToken | userId:", beforeUserId ?? "nil", "| token exists:", afterDeleteToken != nil)
+
         SessionManager.shared.currentUserId = nil
         isLoggedIn = false
-
         appResetID = UUID()
 
+        print("🧪 after session nil | userId:", SessionManager.shared.currentUserId ?? "nil")
         print("✅ 완전 로그아웃")
     }
+
 }
 

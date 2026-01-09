@@ -36,12 +36,6 @@ struct Mainpage_FavoriteListView: View {
 
         ScrollView {
 
-            // ✅ 디버그: 지금 뷰가 보고 있는 favoriteCards 개수
-            Text("DEBUG favorites: \(vm.favoriteCards.count)")
-                .font(.caption)
-                .foregroundColor(.gray)
-                .padding(.top, 8)
-
             // ⭐️ Empty State 처리 (중요)
             if vm.favoriteCards.isEmpty {
                 VStack(spacing: 12) {

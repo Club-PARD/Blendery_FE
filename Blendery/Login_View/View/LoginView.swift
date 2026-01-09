@@ -26,6 +26,12 @@ struct LoginView: View {
         .frame(maxWidth: .infinity)
         .padding(.horizontal, 50)
         .offset(y: -16)
+        .onChange(of: vm.didLogin) { success in
+            if success {
+                onLoginSuccess?()
+            }
+        }
+
     }
 }
 

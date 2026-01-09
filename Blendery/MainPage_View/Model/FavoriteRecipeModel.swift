@@ -9,5 +9,27 @@ import Foundation
 
 struct FavoriteResponse: Decodable {
     let cafeId: String
-    let favorites: [RecipeModel]
+    let favorites: [FavoriteRecipeItem]
+}
+
+// 즐겨찾기 응답용 모델 (variant 단수형)
+struct FavoriteRecipeItem: Decodable {
+    let recipeId: UUID
+    let title: String
+    let category: String
+    let hotThumbnailUrl: String?
+    let iceThumbnailUrl: String?
+    let variant: RecipeVariantModel  // 단수형
+    
+    // RecipeModel로 변환
+    func toRecipeModel() -> RecipeModel {
+        RecipeModel(
+            recipeId: recipeId,
+            title: title,
+            category: category,
+            hotThumbnailUrl: hotThumbnailUrl,
+            iceThumbnailUrl: iceThumbnailUrl,
+            variants: [variant]  // 단수형 variant를 배열로 변환
+        )
+    }
 }

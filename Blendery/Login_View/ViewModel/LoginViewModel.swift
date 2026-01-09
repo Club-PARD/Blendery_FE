@@ -27,6 +27,8 @@ final class LoginViewModel: ObservableObject {
     // - 로딩 스피너, 로그인 성공 후 화면 전환, 에러 토스트/텍스트 표시 등에 쓰임
     @Published var isLoading = false
     @Published var errorMessage: String?
+    @Published var didLogin = false
+
 
     // 서버 변수
     // - AuthService 파일과 연결
@@ -46,6 +48,7 @@ final class LoginViewModel: ObservableObject {
 
         // 뷰 상태 변경 로딩 시작 + 에러 초기화
         isLoading = true
+        didLogin = false
         errorMessage = nil
 
         Task {
@@ -63,6 +66,8 @@ final class LoginViewModel: ObservableObject {
                 SessionManager.shared.currentUserId = userId
 
                 print("로그인 성공")
+                didLogin = true
+
 
             } catch let error as AuthError {
                 // ✅ 서버 상태코드 기반 한국어 메시지

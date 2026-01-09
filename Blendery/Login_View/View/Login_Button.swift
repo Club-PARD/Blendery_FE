@@ -7,12 +7,7 @@ struct Login_Button: View {
 
     var body: some View {
         Button {
-            Task {
-                do {
-                    await viewModel.login()
-                    onLoginSuccess?()   // ⭐️ 여기서 RootView에게 알림
-                }
-            }
+            viewModel.login()
         } label: {
             ZStack {
                 if viewModel.isLoading {

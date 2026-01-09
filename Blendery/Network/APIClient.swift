@@ -153,8 +153,27 @@ final class APIClient {
             throw URLError(.userAuthenticationRequired)
         }
 
+        // authorities 배열을 JSON 문자열로 인코딩 (URL 인코딩은 URLComponents가 자동 처리)
+        let authoritiesArray: [[String: String]] = [["authority": "string"]]
+        guard let authoritiesData = try? JSONSerialization.data(withJSONObject: authoritiesArray),
+              let authoritiesString = String(data: authoritiesData, encoding: .utf8) else {
+            throw URLError(.badURL)
+        }
+
         var components = URLComponents(string: "\(baseURL)/api/recipe/recipe-favorites")!
-        components.queryItems = [URLQueryItem(name: "cafeId", value: cafeId)]
+        // curl 예시에 따라 user 객체의 각 필드를 개별 query 파라미터로 전송
+        // memberId는 현재 userId 사용 (실제 UUID가 필요하면 JWT에서 추출 필요)
+        components.queryItems = [
+            URLQueryItem(name: "memberId", value: userId),
+            URLQueryItem(name: "password", value: "string"),
+            URLQueryItem(name: "authorities", value: authoritiesString),
+            URLQueryItem(name: "credentialsNonExpired", value: "true"),
+            URLQueryItem(name: "accountNonLocked", value: "true"),
+            URLQueryItem(name: "accountNonExpired", value: "true"),
+            URLQueryItem(name: "username", value: userId),
+            URLQueryItem(name: "enabled", value: "true"),
+            URLQueryItem(name: "cafeId", value: cafeId)
+        ]
 
         guard let url = components.url else { throw URLError(.badURL) }
 
