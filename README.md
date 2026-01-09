@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./Assets/가로.png" alt="Blendery Logo" width="180"/>
+  <img src="https://raw.githubusercontent.com/Club-PARD/Blendery_FE/1804c63cc29764714d0e3ff8b20cc6de65e88c57/Blendery/Assets.xcassets/%EA%B0%80%EB%A1%9C.imageset/%EA%B0%80%EB%A1%9C.svg" alt="Blendery Logo" width="180"/>
 </p>
 
 <h1 align="center">Blendery</h1>
