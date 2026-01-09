@@ -9,6 +9,7 @@ import UIKit
 struct Mainpage_View: View {
     var onLogout: (() -> Void)? = nil
     
+    
     // 뷰 상태 변수
     @State private var showStoreModal: Bool = false
     
@@ -275,16 +276,21 @@ struct Mainpage_View: View {
         }
         
         .navigationDestination(item: $selectedRecipe) { nav in
-            if let userId {
+            if let userId,
+               let cafeId = vm.currentCafeId {
+
                 DetailRecipeViewByID(
                     recipeId: nav.id,
-                    userId: userId
+                    userId: userId,
+                    cafeId: cafeId
                 )
+
             } else {
-                // 로그아웃 상태에서 들어오는 걸 방어
+                // cafeId 없으면 진입 막기
                 EmptyView()
             }
         }
+
         
         // 뷰 상태 업데이트
         // vm.toast 값 변화를 받아 토스트 표시

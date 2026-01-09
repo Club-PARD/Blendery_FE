@@ -3,17 +3,24 @@
 //  Blendery
 //
 
+//
+//  DetailRecipeView.swift
+//  Blendery
+//
+
 import SwiftUI
 import UIKit
 
 struct DetailRecipeView: View {
-    @State private var isBookmarked: Bool
 
     // MARK: - Inputs
     let menu: MenuCardModel
     let allMenus: [MenuCardModel]
     let cafeId: String
-    
+
+    // 🔖 북마크 UI 상태 (서버랑 연결할 핵심)
+    @State private var isBookmarked: Bool
+
     init(menu: MenuCardModel, allMenus: [MenuCardModel], cafeId: String) {
         self.menu = menu
         self.allMenus = allMenus
@@ -21,14 +28,15 @@ struct DetailRecipeView: View {
         _isBookmarked = State(initialValue: menu.isBookmarked)
     }
 
-
-    // MARK: - State
+    // MARK: - Option State
     @State private var selectedTemperature: Temperature = .hot
     @State private var selectedSize: Size = .large
 
+    // MARK: - Search
     @StateObject private var searchVM = SearchBarViewModel()
     @FocusState private var isSearchFieldFocused: Bool
 
+    // MARK: - Navigation
     private struct RecipeNavID: Identifiable, Hashable {
         let id: UUID
     }
@@ -38,7 +46,7 @@ struct DetailRecipeView: View {
         SessionManager.shared.currentUserId ?? ""
     }
 
-    // MARK: - Derived State
+    // MARK: - Derived
     private var optionKey: String {
         RecipeOptionKey.make(
             temperature: selectedTemperature,
@@ -61,19 +69,14 @@ struct DetailRecipeView: View {
         ZStack {
             VStack(spacing: 0) {
 
-                // 🔖 타이틀 + 북마크
+                // 🔖 타이틀 + 북마크 (UI 그대로)
                 RecipeTitle(
                     menu: menu,
                     optionTags: optionBadgeTags,
                     thumbnailURL: currentThumbnailURL,
                     isBookmarked: $isBookmarked,
-                    onToggleFavorite: {
-                        isBookmarked.toggle()   // ✅ UI 즉시 변경
-                        print("🔖 bookmark toggled:", isBookmarked)
-                        // 👉 다음 단계에서 여기서 서버 연결
-                    }
+                    onToggleFavorite: toggleBookmark   // ⭐️ 서버 연결
                 )
-
                 .padding(22)
 
                 // 📋 레시피 스텝
@@ -102,7 +105,7 @@ struct DetailRecipeView: View {
             }
         }
 
-        // 🔘 옵션 버튼
+        // 🔘 옵션 버튼 (UI 그대로)
         .overlay(alignment: .bottomTrailing) {
             if !searchVM.isFocused {
                 let showTemp = menu.availableTemps.count >= 2
@@ -121,14 +124,11 @@ struct DetailRecipeView: View {
 
         // MARK: - Life Cycle
         .onAppear {
-
-            // 온도 1종
             if menu.availableTemps.count == 1 {
                 selectedTemperature =
                     menu.availableTemps.contains(.ice) ? .ice : .hot
             }
 
-            // 사이즈 1종
             if menu.availableSizes.count == 1 {
                 selectedSize =
                     menu.availableSizes.contains(.extra) ? .extra : .large
@@ -140,9 +140,7 @@ struct DetailRecipeView: View {
             SearchBarView(
                 vm: searchVM,
                 placeholder: "메뉴 검색",
-                onSearchTap: {
-                    Task { await searchVM.search() }
-                },
+                onSearchTap: { Task { await searchVM.search() } },
                 focus: $isSearchFieldFocused
             )
             .padding(.horizontal, 16)
@@ -151,30 +149,26 @@ struct DetailRecipeView: View {
             .background(Color.white.opacity(0.95))
         }
 
-        // 🔁 검색 결과 → 다른 레시피
+        // 🔁 검색 → 다른 레시피
         .navigationDestination(item: $selectedRecipe) { nav in
             DetailRecipeViewByID(
                 recipeId: nav.id,
-                userId: userId
+                userId: userId,
+                cafeId: cafeId
             )
         }
 
-        // 🔄 Focus 동기화
-        .onChange(of: searchVM.isFocused) { newValue in
-            if isSearchFieldFocused != newValue {
-                isSearchFieldFocused = newValue
-            }
+        // 🔄 포커스 동기화
+        .onChange(of: searchVM.isFocused) { v in
+            if isSearchFieldFocused != v { isSearchFieldFocused = v }
         }
-        .onChange(of: isSearchFieldFocused) { newValue in
-            if searchVM.isFocused != newValue {
-                searchVM.isFocused = newValue
-            }
+        .onChange(of: isSearchFieldFocused) { v in
+            if searchVM.isFocused != v { searchVM.isFocused = v }
         }
 
         // 🔙 네비게이션
         .navigationBarBackButtonHidden(true)
         .toolbar {
-
             ToolbarItem(placement: .navigationBarLeading) {
                 Button {
                     UIApplication.shared.popToRoot(animated: true)
@@ -188,8 +182,37 @@ struct DetailRecipeView: View {
     }
 }
 
-// MARK: - Private Helpers
+// MARK: - ⭐️ 서버 북마크 토글 (핵심)
+// MARK: - ⭐️ 서버 북마크 토글 (핵심)
 private extension DetailRecipeView {
+
+    func toggleBookmark() {
+        print("📤 [Bookmark Toggle]")
+        print("   cafeId:", cafeId)
+        print("   recipeId:", menu.id)
+        print("   variantId:", menu.variantId)
+        
+        let previous = isBookmarked
+        isBookmarked.toggle()   // 1️⃣ UI 즉시 반영
+
+        Task {
+            do {
+                _ = try await APIClient.shared.toggleFavorite(
+                    request: FavoriteToggleRequest(
+                        cafeId: cafeId,
+                        recipeId: menu.id,
+                        recipeVariantId: menu.variantId
+                    )
+                )
+                print("✅ bookmark server synced")
+
+            } catch {
+                // 2️⃣ 실패 시 롤백
+                isBookmarked = previous
+                print("❌ bookmark toggle failed:", error)
+            }
+        }
+    }
 
     var currentThumbnailURL: URL? {
         let s = (selectedTemperature == .hot)
@@ -200,3 +223,4 @@ private extension DetailRecipeView {
         return URL(string: s)
     }
 }
+

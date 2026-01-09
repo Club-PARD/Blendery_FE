@@ -3,11 +3,10 @@ import Combine
 
 @MainActor
 final class DetailRecipeViewModel: ObservableObject {
+    // 서버 연동용
+    var cafeId: String? = nil
 
     @Published var menu: MenuCardModel? = nil
-
-    // 현재 카페
-    var cafeId: String? = nil
 
     // MARK: - UI State
     @Published var isLoading: Bool = false
@@ -78,5 +77,25 @@ final class DetailRecipeViewModel: ObservableObject {
                 print("❌ 상세 레시피 북마크 토글 실패")
             }
         }
+    }
+    // 서버 토글
+    func toggleBookmarkOnServer(
+        recipeId: UUID,
+        variantId: Int
+    ) async throws -> Bool {
+
+        guard let cafeId else {
+            throw URLError(.userAuthenticationRequired)
+        }
+
+        let result = try await APIClient.shared.toggleFavorite(
+            request: FavoriteToggleRequest(
+                cafeId: cafeId,
+                recipeId: recipeId,
+                recipeVariantId: variantId
+            )
+        )
+
+        return result   // 서버가 내려준 최종 favorite 상태
     }
 }

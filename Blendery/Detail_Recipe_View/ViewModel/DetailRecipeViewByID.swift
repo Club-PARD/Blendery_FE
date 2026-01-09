@@ -10,6 +10,7 @@ import SwiftUI
 struct DetailRecipeViewByID: View {
     let recipeId: UUID
     let userId: String
+    let cafeId: String
     
     @StateObject private var vm = DetailRecipeViewModel()
     
@@ -19,7 +20,7 @@ struct DetailRecipeViewByID: View {
                 DetailRecipeView(
                     menu: menu,
                     allMenus: [],
-                    cafeId: vm.cafeId ?? ""
+                    cafeId: cafeId
                 )
             }
             else if let msg = vm.errorMessage {
