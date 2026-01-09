@@ -21,7 +21,7 @@ Blendery는 카페 직원들이</br>
 
 | 온보딩 | 로그인 | 메인 | 검색창 |
 |------|------|------|------|
-| <img src="https://raw.githubusercontent.com/Club-PARD/Blendery_FE/1804c63cc29764714d0e3ff8b20cc6de65e88c57/Blendery/Assets.xcassets/%EA%B0%80%EB%A1%9C.imageset/%EA%B0%80%EB%A1%9C.svg" alt="Blendery Logo" width="200"/> | 이미지 | 이미지 | 이미지 |
+| <img src="https://github.com/Club-PARD/Blendery_FE/blob/main/Blendery/Assets.xcassets/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7/scr%EC%98%A8%EB%B3%B4%EB%94%A9.imageset/scr%EC%98%A8%EB%B3%B4%EB%94%A9.png?raw=true" alt="Blendery Logo" width="200"/> | 이미지 | 이미지 | 이미지 |
 
 #### [2] 검색하기
 > 초성 기반 검색으로 원하는 레시피를 빠르게 찾고 상세 레시피를 확인할 수 있습니다.
