@@ -21,14 +21,14 @@ Blendery는 카페 직원들이</br>
 
 | 온보딩 | 로그인 | 메인 | 검색창 |
 |------|------|------|------|
-| <img src="https://github.com/Club-PARD/Blendery_FE/blob/main/Blendery/Assets.xcassets/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7/scr%EC%98%A8%EB%B3%B4%EB%94%A9.imageset/scr%EC%98%A8%EB%B3%B4%EB%94%A9.png?raw=true" alt="Blendery Logo" width="200"/> | 이미지 | 이미지 | 이미지 |
+| <img src="https://github.com/Club-PARD/Blendery_FE/blob/main/Blendery/Assets.xcassets/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7/scr%EC%98%A8%EB%B3%B4%EB%94%A9.imageset/scr%EC%98%A8%EB%B3%B4%EB%94%A9.png?raw=true" alt="Blendery Logo" width="200"/> | 이미지 | <img src="https://github.com/Club-PARD/Blendery_FE/blob/main/Blendery/Assets.xcassets/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7/scr%EB%A9%94%EC%9D%B8%ED%99%94%EB%A9%B4.imageset/scr%EB%A9%94%EC%9D%B8%ED%99%94%EB%A9%B4.png?raw=true" alt="Blendery Logo" width="200"/> | <img src="https://github.com/Club-PARD/Blendery_FE/blob/main/Blendery/Assets.xcassets/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7/scr%EA%B2%80%EC%83%89%EC%B0%BD.imageset/scr%EA%B2%80%EC%83%89%EC%B0%BD.png?raw=true" alt="Blendery Logo" width="200"/> |
 
 #### [2] 검색하기
 > 초성 기반 검색으로 원하는 레시피를 빠르게 찾고 상세 레시피를 확인할 수 있습니다.
 
 | 초성 검색 | 상세레시피 | 옵션 변경 | 즐겨찾기 등록 |
 |------|------|------|------|
-| 이미지 | <img src="https://github.com/Club-PARD/Blendery_FE/blob/main/Blendery/Assets.xcassets/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7/scr%EC%83%81%EC%84%B8%EB%A0%88%EC%8B%9C%ED%94%BC.imageset/scr%EC%83%81%EC%84%B8%EB%A0%88%EC%8B%9C%ED%94%BC.png?raw=true" alt="Blendery Logo" width="200"/> | <img src="https://github.com/Club-PARD/Blendery_FE/blob/main/Blendery/Assets.xcassets/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7/scr%EC%98%B5%EC%85%98%EB%B3%80%EA%B2%BD.imageset/scr%EC%98%B5%EC%85%98%EB%B3%80%EA%B2%BD.png?raw=true" alt="Blendery Logo" width="200"/> | 이미지 |
+| <img src="https://github.com/Club-PARD/Blendery_FE/blob/main/Blendery/Assets.xcassets/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7/scr%EC%B4%88%EC%84%B1%EA%B2%80%EC%83%89.imageset/scr%EC%B4%88%EC%84%B1%EA%B2%80%EC%83%89.png?raw=true" alt="Blendery Logo" width="200"/> | <img src="https://github.com/Club-PARD/Blendery_FE/blob/main/Blendery/Assets.xcassets/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7/scr%EC%83%81%EC%84%B8%EB%A0%88%EC%8B%9C%ED%94%BC.imageset/scr%EC%83%81%EC%84%B8%EB%A0%88%EC%8B%9C%ED%94%BC.png?raw=true" alt="Blendery Logo" width="200"/> | <img src="https://github.com/Club-PARD/Blendery_FE/blob/main/Blendery/Assets.xcassets/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7/scr%EC%98%B5%EC%85%98%EB%B3%80%EA%B2%BD.imageset/scr%EC%98%B5%EC%85%98%EB%B3%80%EA%B2%BD.png?raw=true" alt="Blendery Logo" width="200"/> | 이미지 |
 
 #### [3] 카테고리 둘러보기
 > 카테고리별로 정리된 메뉴를 탐색하며 즐겨찾기 및 시즌 메뉴를 한눈에 확인할 수 있습니다.
