@@ -14,7 +14,7 @@ struct OnboardingAnimationView: View {
     private let gapToField: CGFloat = 120
 
     //  끝 위치(로고 최종 위치)용: 그대로 유지
-    private let logoOnlyOffset: CGFloat = 400
+    private let logoOnlyOffset: CGFloat = 370
 
     //  로고+로그인 UI 같이 내리기(배경 제외): 그대로 유지
     private let wholeYOffset: CGFloat = 60

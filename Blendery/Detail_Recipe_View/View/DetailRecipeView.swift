@@ -47,13 +47,13 @@ struct DetailRecipeView: View {
 //                RecipeStepList(steps: vm.currentSteps)
 //                    .padding(16)
                 
-                ScreenshotShield {
+//                ScreenshotShield {
                     RecipeStepList(steps: vm.currentSteps, bottomInset: 200)
-                }
+//                }
                 .padding(16)
                 .frame(maxWidth: .infinity, maxHeight: .infinity) // ✅ 스크롤 영역 높이 확보
                 .clipped()
-                
+//                
                 Spacer(minLength: 0)
             }
             

@@ -54,7 +54,7 @@ struct SearchBarView: View {
                 
                 Spacer()
                 
-                // ✅ 검색 켜졌고 + 텍스트 있을 때만: 오른쪽 작은 X
+                
                 if vm.isFocused && vm.hasText {
                     Button { vm.clearText() } label: {
                         Image(systemName: "xmark.circle.fill")
@@ -87,13 +87,9 @@ struct SearchBarView: View {
                     focus.wrappedValue = false
                     hideKeyboard()
                 } label: {
-                    Image(systemName: "xmark")
-                        .font(.system(size: 20))
-                        .foregroundColor(orange)
-                        .frame(width: 42, height: 42)
-                        .background(Color.white)
-                        .clipShape(Circle())
-                        .overlay(Circle().stroke(orange, lineWidth: 1.3))
+                    Text("닫기")
+                        .font(.system(size: 16))
+                        .foregroundColor(Color(red: 136/255, green: 136/255,blue: 136/255))
                 }
                 .buttonStyle(.plain)
             }

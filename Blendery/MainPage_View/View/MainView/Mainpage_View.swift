@@ -131,7 +131,7 @@ struct Mainpage_View: View {
                 
                 TabView(selection: $selectedCategory) {
                     ForEach(topMenuVM.categories, id: \.self) { category in
-                        ScreenshotShield {
+//                        ScreenshotShield {
                             Mainpage_ScrollView(
                                 selectedCategory: category,
                                 vm: vm,
@@ -139,7 +139,7 @@ struct Mainpage_View: View {
                                     selectedRecipe = RecipeNavID(id: menu.id)
                                 }
                             )
-                        }
+//                        }
                         .tag(category) // ✅ TabView selection과 연결
                     }
                 }
