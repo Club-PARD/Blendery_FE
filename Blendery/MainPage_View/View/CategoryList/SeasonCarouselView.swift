@@ -2,7 +2,7 @@
 //  SeasonCarouselView.swift
 //  Blendery
 //
-//  시즌 메뉴 캐러셀
+//  시즌 메뉴 캐러셀 (✅ 목데이터 + 에셋 이미지 전용)
 //
 
 import SwiftUI
@@ -10,16 +10,10 @@ import UIKit
 
 struct SeasonCarouselView: View {
 
-    // 서버 데이터
     let items: [MenuCardModel]
-
-    // 화면 이동용 이벤트
     var onSelectMenu: (MenuCardModel) -> Void = { _ in }
-
-    // 서버 호출 (즐겨찾기 토글)
     var onToggleBookmark: (UUID) -> Void = { _ in }
 
-    // UI 레이아웃 상수
     private let cardWidth: CGFloat = 275
     private let cardHeight: CGFloat = 370
     private let spacing: CGFloat = 16
@@ -27,7 +21,6 @@ struct SeasonCarouselView: View {
     private let extraCenterScale: CGFloat = 0.06
     private var maxScale: CGFloat { 1.0 + extraCenterScale }
 
-    // UI 무한 스크롤 느낌을 위한 복제 데이터
     private var loopItems: [LoopItem] {
         guard !items.isEmpty else { return [] }
         return (0..<5).flatMap { copy in
@@ -35,13 +28,9 @@ struct SeasonCarouselView: View {
         }
     }
 
-    // 캐러셀 중앙 카드 추적 상태
     @State private var focusedID: String?
-
-    // 점프 중복 방지 상태
     @State private var isJumping = false
 
-    // 인디케이터 표시용 계산값
     private var currentIndex: Int {
         guard let focusedID,
               let parsed = LoopItem.parse(id: focusedID) else { return 0 }
@@ -57,8 +46,6 @@ struct SeasonCarouselView: View {
                     LazyHStack(spacing: spacing) {
                         ForEach(loopItems) { loop in
                             GeometryReader { geo in
-
-                                // UI 스케일 계산
                                 let baseScale = scaleForCard(geo: geo, outer: outer)
                                 let isCenter = (focusedID == loop.id)
                                 let xScale = baseScale * (isCenter ? 1.1 : 1.00)
@@ -70,10 +57,6 @@ struct SeasonCarouselView: View {
                                 )
                                 .frame(width: cardWidth, height: cardHeight)
                                 .scaleEffect(x: xScale, y: yScale)
-
-                                // ✅ (지지직 개선) 스크롤 중 계속 애니메이션 걸리는거 제거
-                                // .animation(.easeOut(duration: 0.18), value: focusedID)
-
                                 .contentShape(Rectangle())
                                 .onTapGesture {
                                     let wasCentered = (focusedID == loop.id)
@@ -99,7 +82,6 @@ struct SeasonCarouselView: View {
                 .scrollTargetBehavior(.viewAligned(limitBehavior: .always))
                 .scrollPosition(id: $focusedID, anchor: .center)
                 .onChange(of: focusedID) { newValue in
-                    // UI 무한 스크롤 점프 트리거
                     guard let newValue,
                           let parsed = LoopItem.parse(id: newValue) else { return }
                     if parsed.copy == 1 || parsed.copy == 3 {
@@ -113,8 +95,6 @@ struct SeasonCarouselView: View {
                 .padding(.bottom, 14)
         }
         .background(Color.clear)
-
-        // UI 초기 위치 세팅
         .onAppear {
             if focusedID == nil, let first = items.first {
                 let startID = LoopItem.makeID(copy: 2, originalID: first.id)
@@ -126,7 +106,6 @@ struct SeasonCarouselView: View {
         }
     }
 
-    // 무한 스크롤처럼 보이게 중앙 복귀
     private func jumpToCenter(originalID: UUID) {
         guard !isJumping else { return }
         isJumping = true
@@ -145,7 +124,6 @@ struct SeasonCarouselView: View {
         }
     }
 
-    // 중앙 확대 계산
     private func scaleForCard(geo: GeometryProxy, outer: GeometryProxy) -> CGFloat {
         let centerX = outer.size.width / 2
         let cardMidX = geo.frame(in: .scrollView(axis: .horizontal)).midX
@@ -157,7 +135,6 @@ struct SeasonCarouselView: View {
         return 1.0 - (progress * 0.12)
     }
 
-    // 인디케이터 UI
     private var indicatorView: some View {
         HStack(spacing: 8) {
             ForEach(items.indices, id: \.self) { idx in
@@ -170,7 +147,6 @@ struct SeasonCarouselView: View {
     }
 }
 
-// UI 복제용 래퍼 모델
 private struct LoopItem: Identifiable {
     let copy: Int
     let item: MenuCardModel
@@ -189,63 +165,14 @@ private struct LoopItem: Identifiable {
 }
 
 // ===============================
-//  ✅ URL 이미지 뷰 (레이아웃 흔들림 방지용)
+//  카드 UI
 // ===============================
-private struct RemoteMenuImageView: View {
-
-    let urlString: String?
-
-    var body: some View {
-        let url = makeURL(urlString)
-
-        Group {
-            if let url {
-                AsyncImage(url: url) { phase in
-                    switch phase {
-                    case .empty:
-                        placeholder
-                    case .success(let image):
-                        image
-                            .resizable()
-                            .scaledToFill() // ✅ 스크롤 중 레이아웃 흔들림 줄이려면 Fill이 안정적
-                    case .failure:
-                        placeholder
-                    @unknown default:
-                        placeholder
-                    }
-                }
-            } else {
-                placeholder
-            }
-        }
-        .frame(maxWidth: .infinity, maxHeight: .infinity) // ✅ 항상 같은 크기 유지
-        .clipped()
-    }
-
-    private func makeURL(_ s: String?) -> URL? {
-        guard let s, !s.isEmpty else { return nil }
-        return URL(string: s)
-    }
-
-    private var placeholder: some View {
-        ZStack {
-            Color.white
-            Image("loading")
-                .resizable()
-                .scaledToFit()
-                .frame(width: 125, height: 125)
-        }
-    }
-}
-
-// 카드 UI
 private struct SeasonCard: View {
 
-    // 서버 데이터
     let item: MenuCardModel
-
-    // 서버 호출 즐찾
     let onToggleBookmark: () -> Void
+
+    private let imageHeight: CGFloat = 200 // ✅ 사진 크기 줄이기(원하면 더 낮춰)
 
     var body: some View {
         ZStack(alignment: .topTrailing) {
@@ -253,21 +180,35 @@ private struct SeasonCard: View {
             VStack(spacing: 0) {
 
                 imageView
-                    .frame(height: 260)
+                    .frame(height: imageHeight)
                     .frame(maxWidth: .infinity)
                     .clipped()
+                    .padding(.top, 60)
 
                 HStack(alignment: .center, spacing: 12) {
                     VStack(alignment: .leading, spacing: 6) {
+
                         Text(item.title)
                             .font(.system(size: 18, weight: .bold))
                             .foregroundColor(.black)
                             .lineLimit(1)
 
-                        Text(item.subtitle)
-                            .font(.system(size: 13, weight: .semibold))
-                            .foregroundColor(Color(red: 0.53, green: 0.53, blue: 0.53))
-                            .lineLimit(1)
+                        // ✅ subtitle 옆에 텍스트 하나 더
+                        // - subtitle: 온도 텍스트(예: HOT·ICED)
+                        // - extra: 카테고리 코드(원하면 다른 텍스트로 바꾸면 됨)
+                        HStack(spacing: 6) {
+                            
+                            Text("· \(item.category)")
+                                .font(.system(size: 12, weight: .semibold))
+                                .foregroundColor(Color.gray.opacity(0.65))
+                                .lineLimit(1)
+                            
+                            Text(item.subtitle)
+                                .font(.system(size: 13, weight: .semibold))
+                                .foregroundColor(Color(red: 0.53, green: 0.53, blue: 0.53))
+                                .lineLimit(1)
+
+                        }
                     }
 
                     Spacer()
@@ -305,29 +246,27 @@ private struct SeasonCard: View {
 
     private var imageView: some View {
 
-        // ✅ 1) 서버 썸네일 우선 (ICE 있으면 ICE, 없으면 HOT)
-        let preferredURL: String? =
-            (item.iceThumbnailUrl?.isEmpty == false ? item.iceThumbnailUrl : nil)
-            ?? (item.hotThumbnailUrl?.isEmpty == false ? item.hotThumbnailUrl : nil)
+        // ✅ 시즌은 무조건 에셋만 사용
+        // - imageName 있으면 imageName
+        // - 없으면 title로 에셋 탐색
+        let assetName = item.imageName ?? item.title
 
-        // ✅ 2) 로컬 이미지(타이틀과 같은 이름의 asset) fallback
-        if let preferredURL {
+        if UIImage(named: assetName) != nil {
             return AnyView(
-                RemoteMenuImageView(urlString: preferredURL)
+                Image(assetName)
+                    .resizable()
+                    .scaledToFit()
             )
         } else {
-            let name = item.title
-            if UIImage(named: name) != nil {
-                return AnyView(
-                    Image(name)
+            return AnyView(
+                ZStack {
+                    Color.white
+                    Image("loading")
                         .resizable()
                         .scaledToFit()
-                )
-            } else {
-                return AnyView(
-                    RemoteMenuImageView(urlString: nil)
-                )
-            }
+                        .frame(width: 125, height: 125)
+                }
+            )
         }
     }
 }
