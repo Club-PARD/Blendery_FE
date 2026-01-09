@@ -128,7 +128,8 @@ struct StaffList_View: View {
                     showAddModal = false
                 }
             )
-            .presentationDetents([.fraction(0.45)])
+            .presentationDetents([.fraction(0.62)]) // ✅ 더 올라오게
+            .presentationDragIndicator(.visible)
         }
     }
 }

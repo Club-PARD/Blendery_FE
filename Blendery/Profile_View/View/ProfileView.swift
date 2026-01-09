@@ -207,7 +207,6 @@ struct ProfileView: View {
     private var cardBackground: some View {
         RoundedRectangle(cornerRadius: 20, style: .continuous)
             .fill(Color.white)
-            .shadow(color: Color.black.opacity(0.06), radius: 8, x: 0, y: 3)
     }
 
     private func formattedPhone(_ number: String) -> String {
