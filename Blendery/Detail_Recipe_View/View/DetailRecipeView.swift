@@ -14,19 +14,17 @@ import UIKit
 struct DetailRecipeView: View {
 
     // MARK: - Inputs
-    let menu: MenuCardModel
+    @State private var menu: MenuCardModel
+
     let allMenus: [MenuCardModel]
     let cafeId: String
 
-    // 🔖 북마크 UI 상태 (서버랑 연결할 핵심)
-    @State private var isBookmarked: Bool
-
     init(menu: MenuCardModel, allMenus: [MenuCardModel], cafeId: String) {
-        self.menu = menu
+        _menu = State(initialValue: menu)
         self.allMenus = allMenus
         self.cafeId = cafeId
-        _isBookmarked = State(initialValue: menu.isBookmarked)
     }
+
 
     // MARK: - Option State
     @State private var selectedTemperature: Temperature = .hot
@@ -69,13 +67,15 @@ struct DetailRecipeView: View {
         ZStack {
             VStack(spacing: 0) {
 
-                // 🔖 타이틀 + 북마크 (UI 그대로)
                 RecipeTitle(
                     menu: menu,
                     optionTags: optionBadgeTags,
                     thumbnailURL: currentThumbnailURL,
-                    isBookmarked: $isBookmarked,
-                    onToggleFavorite: toggleBookmark   // ⭐️ 서버 연결
+                    isBookmarked: Binding(
+                        get: { menu.isBookmarked },
+                        set: { menu.isBookmarked = $0 }
+                    ),
+                    onToggleFavorite: toggleBookmark
                 )
                 .padding(22)
 
@@ -124,6 +124,7 @@ struct DetailRecipeView: View {
 
         // MARK: - Life Cycle
         .onAppear {
+            // 1️⃣ 옵션 초기 세팅 (기존 코드)
             if menu.availableTemps.count == 1 {
                 selectedTemperature =
                     menu.availableTemps.contains(.ice) ? .ice : .hot
@@ -133,7 +134,25 @@ struct DetailRecipeView: View {
                 selectedSize =
                     menu.availableSizes.contains(.extra) ? .extra : .large
             }
+
+            // 2️⃣ ⭐️ 서버 기준 북마크 상태 동기화 (이게 핵심)
+            Task {
+                do {
+                    let favorites = try await APIClient.shared.fetchFavorites(cafeId: cafeId)
+
+                    let isFav = favorites.favorites.contains {
+                        $0.recipeId == menu.id
+                    }
+
+                    menu.isBookmarked = isFav
+                    print("🔄 bookmark synced from server:", isFav)
+
+                } catch {
+                    print("❌ failed to sync bookmark:", error)
+                }
+            }
         }
+
 
         // 🔎 하단 검색바
         .safeAreaInset(edge: .bottom) {
@@ -185,16 +204,13 @@ struct DetailRecipeView: View {
 // MARK: - ⭐️ 서버 북마크 토글 (핵심)
 // MARK: - ⭐️ 서버 북마크 토글 (핵심)
 private extension DetailRecipeView {
-
+    
     func toggleBookmark() {
-        print("📤 [Bookmark Toggle]")
-        print("   cafeId:", cafeId)
-        print("   recipeId:", menu.id)
-        print("   variantId:", menu.variantId)
+        let previous = menu.isBookmarked
         
-        let previous = isBookmarked
-        isBookmarked.toggle()   // 1️⃣ UI 즉시 반영
-
+        // 1️⃣ UI 즉시 반영
+        menu.isBookmarked.toggle()
+        
         Task {
             do {
                 _ = try await APIClient.shared.toggleFavorite(
@@ -205,10 +221,9 @@ private extension DetailRecipeView {
                     )
                 )
                 print("✅ bookmark server synced")
-
             } catch {
                 // 2️⃣ 실패 시 롤백
-                isBookmarked = previous
+                menu.isBookmarked = previous
                 print("❌ bookmark toggle failed:", error)
             }
         }
