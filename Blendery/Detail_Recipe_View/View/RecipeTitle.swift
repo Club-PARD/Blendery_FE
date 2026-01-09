@@ -11,6 +11,7 @@ struct RecipeTitle: View {
     let menu: MenuCardModel
     let optionTags: [String]
     let thumbnailURL: URL?
+    let onToggleFavorite: () -> Void
 
     var body: some View {
         HStack {
@@ -49,7 +50,10 @@ struct RecipeTitle: View {
                     )
                     .padding(.bottom, 8)
                     Spacer()
-                    FavoriteButton()
+                    FavoriteButton(
+                        isFavorite: .constant(menu.isBookmarked),
+                        onToggle: onToggleFavorite
+                    )
                 }
 
                 Text(menu.title)
@@ -59,16 +63,3 @@ struct RecipeTitle: View {
         }
     }
 }
-
-//#Preview {
-//    RecipeTitle(
-//        menu: MenuCardModel(
-//            category: "커피",
-//            tags: ["ICE"], // ✅ 추가
-//            title: "카페모카",
-//            subtitle: "에스프레소 2샷",
-//            lines: ["에스프레소 2샷", "초코소스 2펌프", "우유 윗선"],
-//            isBookmarked: false
-//        )
-//    )
-//}

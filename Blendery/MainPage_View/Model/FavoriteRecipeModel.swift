@@ -33,3 +33,14 @@ struct FavoriteRecipeItem: Decodable {
         )
     }
 }
+
+struct FavoriteToggleRequest: Encodable {
+    let cafeId: String
+    let recipeId: UUID
+    let recipeVariantId: Int
+}
+
+
+struct FavoriteToggleResponse: Decodable {
+    let favorite: Bool
+}

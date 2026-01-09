@@ -1,16 +1,18 @@
 import SwiftUI
 import Combine
 
-//  토스트 데이터 타입 (onChange 요구사항 때문에 Equatable)
+// MARK: - Toast
 struct ToastData: Identifiable, Equatable {
     let id = UUID()
     let iconName: String?
     let message: String
 }
 
+// MARK: - MainpageViewModel
 @MainActor
 final class MainpageViewModel: ObservableObject {
-    
+
+    // UI → Server category 매핑
     private let categoryMap: [String: String] = [
         "커피": "COFFEE",
         "콜드브루": "COLD_BREW",
@@ -20,81 +22,177 @@ final class MainpageViewModel: ObservableObject {
         "티": "TEA",
         "에이드&과일주스": "ADE"
     ]
-    
+
     func serverCategory(from uiCategory: String) -> String? {
         categoryMap[uiCategory]
     }
-    
+
+    // MARK: - State
     @Published var cards: [MenuCardModel] = []
     @Published var favoriteCards: [MenuCardModel] = []
     @Published var toast: ToastData? = nil
     @Published var isLoading: Bool = false
-    
+
+    // ⭐️ 현재 선택된 카페 컨텍스트
+    @Published var currentCafeId: String? = nil
+
     init() {}
-    
+
+    // MARK: - Recipes
     func fetchRecipes(
-        userId: String,
         franchiseId: String,
         category: String? = nil,
         favorite: Bool? = nil
     ) async {
-        
         do {
             let recipes = try await APIClient.shared.fetchRecipes(
                 franchiseId: franchiseId,
                 category: category,
                 favorite: favorite
             )
-            
-            // 🔄 서버 모델 → UI 모델 변환
-            self.cards = recipes.map { recipe in
-                MenuCardModel.from(recipe)
-            }
-            
+
+            self.cards = recipes.map { MenuCardModel.from($0) }
+
         } catch {
             print("❌ 레시피 목록 조회 실패:", error)
         }
     }
-    
+
     func normalItems(for selectedCategory: String) -> [MenuCardModel] {
-        
-        guard let serverCategory = categoryMap[selectedCategory] else {
-            return []
-        }
-        
+        guard let serverCategory = categoryMap[selectedCategory] else { return [] }
         return cards.filter { $0.category == serverCategory }
     }
-    
-    
-    func toggleBookmark(id: UUID) {
-        guard let idx = cards.firstIndex(where: { $0.id == id }) else { return }
-        
+
+    // MARK: - Bookmark (Main Tab)
+    /// 메인 탭: 아이콘 토글
+    func toggleBookmarkFromMain(id: UUID) {
+        guard
+            let idx = cards.firstIndex(where: { $0.id == id }),
+            let cafeId = currentCafeId
+        else { return }
+
+        // 1️⃣ UI 즉시 반영
         cards[idx].isBookmarked.toggle()
-        cards = cards
-        
-        if cards[idx].isBookmarked == false {
-            toast = ToastData(iconName: "토스트 체크", message: "즐겨찾기가 해제되었습니다.")
-        } else {
-            toast = ToastData(iconName: "토스트 체크", message: "즐겨찾기에 추가되었습니다.")
+        let isBookmarked = cards[idx].isBookmarked
+
+        toast = ToastData(
+            iconName: "토스트 체크",
+            message: isBookmarked
+                ? "즐겨찾기에 추가되었습니다."
+                : "즐겨찾기가 해제되었습니다."
+        )
+
+        // 2️⃣ 서버 토글
+        Task {
+            do {
+                _ = try await APIClient.shared.toggleFavorite(
+                    request: FavoriteToggleRequest(
+                        cafeId: cafeId,
+                        recipeId: cards[idx].id,
+                        recipeVariantId: cards[idx].variantId
+                    )
+                )
+            } catch {
+                // ❌ 실패 시 롤백
+                cards[idx].isBookmarked.toggle()
+                toast = ToastData(
+                    iconName: "exclamationmark.triangle",
+                    message: "즐겨찾기 변경에 실패했습니다."
+                )
+            }
         }
     }
-    
+
+    // MARK: - Bookmark (Favorite Tab)
+    /// 즐겨찾기 탭: 카드 제거
+    func removeBookmarkFromFavorites(id: UUID) {
+        guard let cafeId = currentCafeId else { return }
+
+        // 1️⃣ 즐겨찾기 리스트 제거
+        favoriteCards.removeAll { $0.id == id }
+
+        // 2️⃣ 메인 카드 상태 동기화
+        if let idx = cards.firstIndex(where: { $0.id == id }) {
+            cards[idx].isBookmarked = false
+        }
+
+        toast = ToastData(
+            iconName: "토스트 체크",
+            message: "즐겨찾기가 해제되었습니다."
+        )
+
+        // 3️⃣ 서버 토글
+        Task {
+            do {
+                guard let target = cards.first(where: { $0.id == id }) else { return }
+
+                _ = try await APIClient.shared.toggleFavorite(
+                    request: FavoriteToggleRequest(
+                        cafeId: cafeId,
+                        recipeId: target.id,
+                        recipeVariantId: target.variantId
+                    )
+                )
+            } catch {
+                toast = ToastData(
+                    iconName: "exclamationmark.triangle",
+                    message: "즐겨찾기 해제에 실패했습니다."
+                )
+            }
+        }
+    }
+
+    // MARK: - Favorites Load
+    func loadFavoritesForMyCafe() async {
+        isLoading = true
+        defer { isLoading = false }
+
+        do {
+            let cafes = try await APIClient.shared.fetchMyCafes()
+            guard let cafeId = cafes.first?.cafeId else {
+                toast = ToastData(
+                    iconName: "exclamationmark.triangle",
+                    message: "접근 가능한 매장이 없습니다."
+                )
+                return
+            }
+
+            // ⭐️ 현재 카페 저장
+            self.currentCafeId = cafeId
+
+            let res = try await APIClient.shared.fetchFavorites(cafeId: cafeId)
+
+            self.favoriteCards = res.favorites.map {
+                MenuCardModel.fromFavorite($0.toRecipeModel())
+            }
+
+        } catch {
+            print("❌ 즐겨찾기 불러오기 실패:", error)
+            toast = ToastData(
+                iconName: "exclamationmark.triangle",
+                message: "즐겨찾기 불러오기 실패"
+            )
+        }
+    }
+
+    // MARK: - Toast
     func clearToast() {
         toast = nil
     }
-    
+
+    // MARK: - Masonry
     func distributeMasonry(
         items: [MenuCardModel],
         heights: [UUID: CGFloat],
         spacing: CGFloat = 17,
         defaultHeight: CGFloat = 200
     ) -> (left: [MenuCardModel], right: [MenuCardModel]) {
-        
+
         var left: [MenuCardModel] = []
         var right: [MenuCardModel] = []
         var leftH: CGFloat = 0
         var rightH: CGFloat = 0
-        
+
         for item in items {
             let h = heights[item.id] ?? defaultHeight
             if leftH <= rightH {
@@ -107,46 +205,8 @@ final class MainpageViewModel: ObservableObject {
         }
         return (left, right)
     }
-    @MainActor
-    func loadFavoritesForMyCafe() async {
-        print("🔥 loadFavoritesForMyCafe CALLED")
-        
-        isLoading = true
-        defer { isLoading = false }
-        
-        do {
-            print("➡️ 1) calling fetchMyCafes")
-            let cafes = try await APIClient.shared.fetchMyCafes()
-            print("✅ 1) cafes decoded count:", cafes.count)
-            
-            guard let cafeId = cafes.first?.cafeId else {
-                print("⛔️ cafeId is nil")
-                toast = ToastData(iconName: "exclamationmark.triangle", message: "접근 가능한 매장이 없습니다.")
-                return
-            }
-            print("✅ 1) using cafeId:", cafeId)
-            
-            print("➡️ 2) calling fetchFavorites")
-            let res = try await APIClient.shared.fetchFavorites(cafeId: cafeId)
-            print("✅ 2) favorites decoded count:", res.favorites.count)
-            
-            // ⭐️ FavoriteRecipeItem → RecipeModel → MenuCardModel 변환
-            self.favoriteCards = res.favorites.map { favoriteItem in
-                let recipeModel = favoriteItem.toRecipeModel()
-                return MenuCardModel.fromFavorite(recipeModel)
-            }
-            print("✅ 3) favoriteCards assigned:", self.favoriteCards.count)
-            
-        } catch is CancellationError {
-            print("⚠️ loadFavorites task cancelled")
-        } catch {
-            print("❌ loadFavoritesForMyCafe FAILED:", error)
-            toast = ToastData(iconName: "exclamationmark.triangle", message: "즐겨찾기 불러오기 실패")
-        }
-    }
-    
-    
 }
+
 
 //  검색창 뷰모델
 @MainActor

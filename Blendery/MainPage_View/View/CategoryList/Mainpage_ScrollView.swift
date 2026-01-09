@@ -46,7 +46,7 @@ struct Mainpage_ScrollView: View {
                     onSelectMenu: onSelectMenu,
 
                     // 서버?
-                    onToggleBookmark: { vm.toggleBookmark(id: $0) }
+                    onToggleBookmark: { vm.toggleBookmarkFromMain(id: $0) }
                 )
 
             } else {
@@ -55,7 +55,7 @@ struct Mainpage_ScrollView: View {
                     items: items,
 
                     // 서버? 즐찾토글
-                    onToggleBookmark: { vm.toggleBookmark(id: $0) },
+                    onToggleBookmark: { vm.toggleBookmarkFromMain(id: $0) },
 
                     onSelectMenu: onSelectMenu
                 )

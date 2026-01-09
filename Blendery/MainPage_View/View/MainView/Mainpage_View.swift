@@ -176,7 +176,6 @@ struct Mainpage_View: View {
 
                         print("🟢 onChange -> fetchRecipes:", serverCategory)
                         await vm.fetchRecipes(
-                            userId: userId,
                             franchiseId: "ac120003-9b6e-19e0-819b-6e8a08870001",
                             category: serverCategory
                         )

@@ -18,7 +18,8 @@ struct DetailRecipeViewByID: View {
             if let menu = vm.menu {
                 DetailRecipeView(
                     menu: menu,
-                    allMenus: []   // 또는 상위에서 주입
+                    allMenus: [],
+                    cafeId: vm.cafeId ?? ""
                 )
             }
             else if let msg = vm.errorMessage {

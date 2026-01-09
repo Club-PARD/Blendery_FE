@@ -223,4 +223,39 @@ final class APIClient {
         let res = try JSONDecoder().decode(MemberCafesResponse.self, from: data)
         return res.cafes
     }
+
+}
+
+extension APIClient {
+
+    func toggleFavorite(
+        request: FavoriteToggleRequest
+    ) async throws -> Bool {
+
+        guard let userId = SessionManager.shared.currentUserId else {
+            throw URLError(.userAuthenticationRequired)
+        }
+
+        let url = URL(string: "\(baseURL)/api/recipe/recipe-favorites/toggle")!
+        var urlRequest = try makeAuthorizedRequest(url: url, userId: userId)
+
+        urlRequest.httpMethod = "POST"
+        urlRequest.setValue("application/json", forHTTPHeaderField: "Content-Type")
+        urlRequest.httpBody = try JSONEncoder().encode(request)
+
+        let (data, response) = try await URLSession.shared.data(for: urlRequest)
+
+        guard let http = response as? HTTPURLResponse,
+              (200...299).contains(http.statusCode)
+        else {
+            throw URLError(.badServerResponse)
+        }
+
+        let decoded = try JSONDecoder().decode(
+            FavoriteToggleResponse.self,
+            from: data
+        )
+
+        return decoded.favorite
+    }
 }

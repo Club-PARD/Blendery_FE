@@ -1,10 +1,3 @@
-////
-////  temp_Data.swift
-////  Blendery
-////
-////  Created by 박성준 on 12/28/25.
-////
-//
 import Foundation
 
 let categories: [String] = [
@@ -19,24 +12,34 @@ let categories: [String] = [
 ]
 
 struct MenuCardModel: Identifiable, Hashable {
-    let id: UUID
+
+    // MARK: - Identity
+    let id: UUID                 // recipeId
+    let variantId: Int           // ⭐️ 대표 variantId (중요)
+
+    // MARK: - UI Info
     let category: String
-    let tags: [String]          // ✅ 누락돼서 에러났던 부분
+    let tags: [String]
     let title: String
     let subtitle: String
     let lines: [String]
+
+    // MARK: - State
     var isBookmarked: Bool
 
+    // MARK: - Image
     var isImageLoading: Bool
     var imageName: String?
-    
     let hotThumbnailUrl: String?
     let iceThumbnailUrl: String?
-    
+
+    // MARK: - Recipe
     let recipesByOption: [String: [RecipeStep]]
 
+    // MARK: - Initializer
     init(
-        id: UUID = UUID(),
+        id: UUID,
+        variantId: Int,                 // ⭐️ 필수
         category: String,
         tags: [String] = [],
         title: String,
@@ -50,6 +53,7 @@ struct MenuCardModel: Identifiable, Hashable {
         iceThumbnailUrl: String? = nil
     ) {
         self.id = id
+        self.variantId = variantId      // ⭐️ 여기서 확정
         self.category = category
         self.tags = tags
         self.title = title
@@ -63,23 +67,3 @@ struct MenuCardModel: Identifiable, Hashable {
         self.iceThumbnailUrl = iceThumbnailUrl
     }
 }
-
-//extension MenuCardModel {
-//    static func fromFavorite(_ recipe: RecipeModel) -> MenuCardModel {
-//        let model = MenuCardModel.from(recipe)
-//        return MenuCardModel(
-//            id: model.id,
-//            category: model.category,
-//            tags: model.tags,
-//            title: model.title,
-//            subtitle: model.subtitle,
-//            lines: model.lines,
-//            recipesByOption: model.recipesByOption,
-//            isBookmarked: true,   // ⭐️ 핵심
-//            isImageLoading: false,
-//            imageName: nil,
-//            hotThumbnailUrl: model.hotThumbnailUrl,
-//            iceThumbnailUrl: model.iceThumbnailUrl
-//        )
-//    }
-//}

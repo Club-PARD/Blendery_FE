@@ -113,6 +113,7 @@ extension MenuCardModel {
         
         return MenuCardModel(
             id: recipe.recipeId,
+            variantId: defaultVariant?.variantId ?? 0,
             category: recipe.category,
             tags: [],
             title: recipe.title,
@@ -140,6 +141,7 @@ extension MenuCardModel {
     static func fromSearch(_ model: SearchRecipeModel) -> MenuCardModel {
         MenuCardModel(
             id: model.recipeId,
+            variantId: 0,
             category: model.category,
             tags: searchTags(from: model),
             title: model.title,

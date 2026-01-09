@@ -92,7 +92,7 @@ struct Mainpage_FavoriteListView: View {
     private func menuCard(_ item: MenuCardModel) -> some View {
         MenuCardView(
             model: item,
-            onToggleBookmark: { vm.toggleBookmark(id: item.id) },
+            onToggleBookmark: { vm.toggleBookmarkFromMain(id: item.id) },
             onSelect: { onSelectMenu(item) }
         )
         .background(
@@ -125,23 +125,18 @@ private struct MenuCardView: View {
         ZStack(alignment: .topTrailing) {
             RoundedRectangle(cornerRadius: 12)
                 .fill(Color.white)
-
-            // UI 터치 영역 처리
-            Color.clear
                 .contentShape(Rectangle())
-                .onTapGesture { onSelect() }
+                .onTapGesture { onSelect() }   // ✅ 카드 탭
 
             VStack(alignment: .leading, spacing: 6) {
                 HStack(spacing: 6) {
-
-                    // UI 태그 표시
                     ForEach(model.tags, id: \.self) { t in
                         Text(t)
                             .font(.system(size: 11, weight: .semibold))
                             .foregroundColor(.gray)
                             .padding(.horizontal, 8)
                             .padding(.vertical, 4)
-                            .background(Color(red: 0.71, green: 0.71, blue: 0.71).opacity(0.25))
+                            .background(Color.gray.opacity(0.25))
                             .clipShape(RoundedRectangle(cornerRadius: 6))
                     }
                     Spacer()
@@ -160,18 +155,19 @@ private struct MenuCardView: View {
                         Text(line)
                             .font(.system(size: 15))
                             .foregroundColor(.gray)
-                            .fixedSize(horizontal: false, vertical: true)
                     }
                 }
             }
             .padding(14)
 
+            // ✅ 북마크 버튼 (이제 살아남)
             Button(action: onToggleBookmark) {
                 Image(systemName: model.isBookmarked ? "bookmark.fill" : "bookmark")
                     .resizable()
                     .frame(width: 14, height: 17)
                     .padding(12)
                     .foregroundColor(.red)
+                    .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
         }

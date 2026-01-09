@@ -1,21 +1,18 @@
-//
-//  FavoriteButton.swift
-//  Blendery
-//
-//  Created by 박영언 on 12/26/25.
-//
 import SwiftUI
 
 struct FavoriteButton: View {
-    @State private var isFavorite = false
+
+    @Binding var isFavorite: Bool
+    let onToggle: () -> Void
 
     var body: some View {
         Button {
-            isFavorite.toggle()
+            onToggle()
         } label: {
-            Image(isFavorite ? "즐찾아이콘" : "즐찾끔")
+            Image(systemName: isFavorite ? "bookmark.fill" : "bookmark")
                 .resizable()
                 .frame(width: 15.2, height: 18.25)
+                .foregroundColor(.red)
         }
         .buttonStyle(.plain)
     }
