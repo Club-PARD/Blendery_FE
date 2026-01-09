@@ -28,7 +28,7 @@ Blendery는 카페 직원들이</br>
 
 | 초성 검색 | 상세레시피 | 옵션 변경 | 즐겨찾기 등록 |
 |------|------|------|------|
-| <img src="https://github.com/Club-PARD/Blendery_FE/blob/main/Blendery/Assets.xcassets/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7/scr%EC%B4%88%EC%84%B1%EA%B2%80%EC%83%89.imageset/scr%EC%B4%88%EC%84%B1%EA%B2%80%EC%83%89.png?raw=true" alt="Blendery Logo" width="200"/> | <img src="https://github.com/Club-PARD/Blendery_FE/blob/main/Blendery/Assets.xcassets/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7/scr%EC%83%81%EC%84%B8%EB%A0%88%EC%8B%9C%ED%94%BC.imageset/scr%EC%83%81%EC%84%B8%EB%A0%88%EC%8B%9C%ED%94%BC.png?raw=true" alt="Blendery Logo" width="200"/> | <img src="https://github.com/Club-PARD/Blendery_FE/blob/main/Blendery/Assets.xcassets/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7/scr%EC%98%B5%EC%85%98%EB%B3%80%EA%B2%BD.imageset/scr%EC%98%B5%EC%85%98%EB%B3%80%EA%B2%BD.png?raw=true" alt="Blendery Logo" width="200"/> | 이미지 |
+| <img src="https://github.com/Club-PARD/Blendery_FE/blob/main/Blendery/Assets.xcassets/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7/scr%EC%B4%88%EC%84%B1%EA%B2%80%EC%83%89.imageset/scr%EC%B4%88%EC%84%B1%EA%B2%80%EC%83%89.png?raw=true" alt="Blendery Logo" width="200"/> | <img src="https://github.com/Club-PARD/Blendery_FE/blob/main/Blendery/Assets.xcassets/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7/scr%EC%83%81%EC%84%B8%EB%A0%88%EC%8B%9C%ED%94%BC.imageset/scr%EC%83%81%EC%84%B8%EB%A0%88%EC%8B%9C%ED%94%BC.png?raw=true" alt="Blendery Logo" width="200"/> | <img src="https://github.com/Club-PARD/Blendery_FE/blob/main/Blendery/Assets.xcassets/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7/scr%EC%98%B5%EC%85%98%EB%B3%80%EA%B2%BD.imageset/scr%EC%98%B5%EC%85%98%EB%B3%80%EA%B2%BD.png?raw=true" alt="Blendery Logo" width="200"/> | <img src="https://github.com/Club-PARD/Blendery_FE/blob/main/Blendery/Assets.xcassets/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7/scr%EC%A6%90%EC%B0%BE%EB%93%B1%EB%A1%9D.imageset/scr%EC%A6%90%EC%B0%BE%EB%93%B1%EB%A1%9D.png?raw=true" alt="Blendery Logo" width="200"/> |
 
 #### [3] 카테고리 둘러보기
 > 카테고리별로 정리된 메뉴를 탐색하며 즐겨찾기 및 시즌 메뉴를 한눈에 확인할 수 있습니다.
@@ -42,14 +42,14 @@ Blendery는 카페 직원들이</br>
 
 | 프로필 | 사진등록 | 이름 수정 | 연락처 수정 |
 |------|------|------|------|
-| 이미지 | 이미지 | 이미지 | 이미지 |
+| <img src="https://github.com/Club-PARD/Blendery_FE/blob/main/Blendery/Assets.xcassets/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7/scr%ED%94%84%EB%A1%9C%ED%95%84.imageset/scr%ED%94%84%EB%A1%9C%ED%95%84.png?raw=true" alt="Blendery Logo" width="200"/> | <img src="https://github.com/Club-PARD/Blendery_FE/blob/main/Blendery/Assets.xcassets/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7/scr%ED%94%84%EC%82%AC%EB%93%B1%EB%A1%9D.imageset/scr%ED%94%84%EC%82%AC%EB%93%B1%EB%A1%9D.png?raw=true" alt="Blendery Logo" width="200"/> | <img src="https://github.com/Club-PARD/Blendery_FE/blob/main/Blendery/Assets.xcassets/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7/scr%EC%9D%B4%EB%A6%84%EC%88%98%EC%A0%95.imageset/scr%EC%9D%B4%EB%A6%84%EC%88%98%EC%A0%95.png?raw=true" alt="Blendery Logo" width="200"/> | <img src="https://github.com/Club-PARD/Blendery_FE/blob/main/Blendery/Assets.xcassets/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7/scr%EC%97%B0%EB%9D%BD%EC%B2%98%EC%88%98%EC%A0%95.imageset/scr%EC%97%B0%EB%9D%BD%EC%B2%98%EC%88%98%EC%A0%95.png?raw=true" alt="Blendery Logo" width="200"/> |
 
 #### [5] 직원 관리
 > 매장 내 직원 정보를 관리하며 역할 변경, 추가 및 삭제가 가능합니다.
 
 | 직원 리스트 | 직원 수정 | 직원 삭제 | 직원 추가 |
 |------|------|------|------|
-| 이미지 | 이미지 | 이미지 | 이미지 |
+| <img src="https://github.com/Club-PARD/Blendery_FE/blob/main/Blendery/Assets.xcassets/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7/scr%EC%A7%81%EC%9B%90%EB%A6%AC%EC%8A%A4%ED%8A%B8.imageset/scr%EC%A7%81%EC%9B%90%EB%A6%AC%EC%8A%A4%ED%8A%B8.png?raw=true" alt="Blendery Logo" width="200"/> | <img src="https://github.com/Club-PARD/Blendery_FE/blob/main/Blendery/Assets.xcassets/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7/scr%EC%A7%81%EC%9B%90%EC%88%98%EC%A0%95.imageset/scr%EC%A7%81%EC%9B%90%EC%88%98%EC%A0%95.png?raw=true" alt="Blendery Logo" width="200"/> | <img src="https://github.com/Club-PARD/Blendery_FE/blob/main/Blendery/Assets.xcassets/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7/scr%EC%A7%81%EC%9B%90%EC%82%AD%EC%A0%9C.imageset/scr%EC%A7%81%EC%9B%90%EC%82%AD%EC%A0%9C.png?raw=true" alt="Blendery Logo" width="200"/> | <img src="https://github.com/Club-PARD/Blendery_FE/blob/main/Blendery/Assets.xcassets/%EC%8A%A4%ED%81%AC%EB%A6%B0%EC%83%B7/scr%EC%A7%81%EC%9B%90%EC%B4%88%EB%8C%80.imageset/scr%EC%A7%81%EC%9B%90%EC%B4%88%EB%8C%80.png?raw=true" alt="Blendery Logo" width="200"/> |
 
 ---
 ## Features
