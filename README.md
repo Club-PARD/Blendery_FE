@@ -117,5 +117,6 @@ Blendery는
 UI/UX와 실사용성을 최우선으로 고려해 개발되었습니다.
 
 ---
-🔗 GitHub Repository  
-https://github.com/Club-PARD/Blendery_FE
+🔗 GitHub Repository
+코드보기 (아래 주소로)  
+https://github.com/Club-PARD/Blendery_FE/tree/UI/Flow_Fix
